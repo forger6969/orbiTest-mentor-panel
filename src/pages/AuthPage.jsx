@@ -16,7 +16,7 @@ const AuthPage = () => {
         className="fixed inset-0 z-0 bg-black/80 backdrop-blur-2xl"
       />
 
-      <p>asd</p>
+      <p>asфывфывd</p>
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 gap-6">
         <div className="bg-black/80 backdrop-blur-xl rounded-2xl max-w-3xl w-full p-6 md:p-8 text-center shadow-2xl">
           <img className="mx-auto mb-6" src={whitelogo} alt="orbiTest logo" />
