@@ -162,41 +162,7 @@ const Dashboard = () => {
               <NavItem icon={HelpCircle} label="Online" />
             </nav>
 
-            {/* {showStorageAlert && (
-              <div className="m-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-sm">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="p-2 bg-white rounded-lg shadow-sm">
-                    <Users01 className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <button
-                    onClick={() => setShowStorageAlert(false)}
-                    className="text-slate-400 hover:text-slate-600 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
 
-                <h3 className="text-sm font-semibold text-slate-900 mb-1">
-                  Used space
-                </h3>
-                <p className="text-xs text-slate-600 mb-3">
-                  Your team has used 80% of your available space. Need more?
-                </p>
-
-                <div className="relative h-2 bg-slate-200 rounded-full overflow-hidden mb-4">
-                  <div className="absolute inset-y-0 left-0 w-4/5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full shadow-sm"></div>
-                </div>
-
-                <div className="flex gap-2">
-                  <button className="flex-1 px-3 py-1.5 text-xs font-medium text-slate-700 hover:text-slate-900 transition-colors">
-                    Dismiss
-                  </button>
-                  <button className="flex-1 px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm hover:shadow">
-                    Upgrade plan
-                  </button>
-                </div>
-              </div>
-            )} */}
 
             <div className="p-4 border-t border-slate-200 space-y-1">
               <NavItem icon={Settings} label="Settings" />
