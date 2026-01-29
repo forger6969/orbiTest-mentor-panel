@@ -162,7 +162,7 @@ const Dashboard = () => {
               <NavItem icon={HelpCircle} label="Online" />
             </nav>
 
-            {showStorageAlert && (
+            {/* {showStorageAlert && (
               <div className="m-4 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-sm">
                 <div className="flex items-start justify-between mb-3">
                   <div className="p-2 bg-white rounded-lg shadow-sm">
@@ -196,7 +196,7 @@ const Dashboard = () => {
                   </button>
                 </div>
               </div>
-            )}
+            )} */}
 
             <div className="p-4 border-t border-slate-200 space-y-1">
               <NavItem icon={Settings} label="Settings" />
