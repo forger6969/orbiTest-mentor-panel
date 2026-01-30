@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import WelcomeSplash from "../components/WelcomeSplash";
 import axios from "axios";
 import { SidebarNavigationSimpleDemo } from "../components/SideBar";
+import BigLoader from "../components/BigLoader";
 
 const Dashboard = () => {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
   const [user, setUser] = useState(null);
+  const [loader, setLoader] = useState(true);
 
   const getUser = async () => {
     try {
@@ -21,14 +23,17 @@ const Dashboard = () => {
       );
 
       setUser(req.data.user);
+      setShowSplash(true);
 
       const splashWasShown = sessionStorage.getItem("welcomeShown");
 
-      if (!splashWasShown) {
-        setShowSplash(true);
+      if (splashWasShown) {
+        setShowSplash(false);
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -60,6 +65,8 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold">Dashboard</h1>
         </div>
       )}
+
+      {loader && <BigLoader />}
     </div>
   );
 };
