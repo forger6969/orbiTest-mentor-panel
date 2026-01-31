@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import WelcomeSplash from "../components/WelcomeSplash";
 import axios from "axios";
-import { SidebarNavigationSimpleDemo } from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -55,9 +55,8 @@ const Dashboard = () => {
 
       {/* Основной контент */}
       {!showSplash && (
-        <div className="p-6">
-          <SidebarNavigationSimpleDemo />
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+        <div className="h-screen fixed">
+          <Sidebar/>
         </div>
       )}
     </div>
