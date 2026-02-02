@@ -1,0 +1,914 @@
+используй daisyUI но чтобы цвета как я говорил были однотонные и расшырь карточку в календаре добавь три точки в карточке в календаре и добавь туда типо просто examples чтобы я мог туда сам что то добавить и добавь субботу в календарь и в табице возле каждой группы добавт типо карандаш мусорку(иконку удалть) и еще какие то иконки и еще улучши както от себя и еще сделай чтобы времена в календаре были не статическими потому что в массиве могут быть разные времена делай ето динамически
+
+
+
+import React, { useState } from "react";
+import {
+  Calendar,
+  Table,
+  LayoutGrid,
+  ChevronDown,
+  Users,
+  Clock,
+  TrendingUp,
+  MessageCircle,
+  User,
+} from "lucide-react";
+
+// Mock data для примера
+// const mockGroups = [
+//   {
+//     _id: "1",
+//     groupName: "React Advanced",
+//     groupDescribe: "Advanced React patterns and hooks",
+//     students: [
+//       {
+//         _id: "s1",
+//         firstName: "Алексей",
+//         lastName: "Иванов",
+//         avatar: "https://i.pravatar.cc/150?img=1",
+//         grade: "middle",
+//       },
+//       {
+//         _id: "s2",
+//         firstName: "Мария",
+//         lastName: "Петрова",
+//         avatar: "https://i.pravatar.cc/150?img=5",
+//         grade: "strongJunior",
+//       },
+//       {
+//         _id: "s3",
+//         firstName: "Дмитрий",
+//         lastName: "Сидоров",
+//         avatar: "https://i.pravatar.cc/150?img=3",
+//         grade: "senior",
+//       },
+//     ],
+//     avatar:
+//       "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400",
+//     groupPerformance: 87,
+//     groupTime: "18:00",
+//     groupDay: "even",
+//     telegramId: "@react_advanced",
+//     mentor: { _id: "m1", name: "Сергей Николаев" },
+//   },
+//   {
+//     _id: "2",
+//     groupName: "JavaScript Fundamentals",
+//     groupDescribe: "Core JavaScript concepts and ES6+",
+//     students: [
+//       {
+//         _id: "s4",
+//         firstName: "Анна",
+//         lastName: "Козлова",
+//         avatar: "https://i.pravatar.cc/150?img=9",
+//         grade: "junior",
+//       },
+//       {
+//         _id: "s5",
+//         firstName: "Игорь",
+//         lastName: "Морозов",
+//         avatar: "https://i.pravatar.cc/150?img=7",
+//         grade: "junior",
+//       },
+//     ],
+//     avatar:
+//       "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=400",
+//     groupPerformance: 72,
+//     groupTime: "16:00",
+//     groupDay: "odd",
+//     telegramId: "@js_fundamentals",
+//     mentor: { _id: "m2", name: "Елена Волкова" },
+//   },
+//   {
+//     _id: "3",
+//     groupName: "Node.js Backend",
+//     groupDescribe: "Building scalable backend applications",
+//     students: [
+//       {
+//         _id: "s6",
+//         firstName: "Павел",
+//         lastName: "Смирнов",
+//         avatar: "https://i.pravatar.cc/150?img=8",
+//         grade: "strongMiddle",
+//       },
+//       {
+//         _id: "s7",
+//         firstName: "Ольга",
+//         lastName: "Новикова",
+//         avatar: "https://i.pravatar.cc/150?img=10",
+//         grade: "middle",
+//       },
+//       {
+//         _id: "s8",
+//         firstName: "Кирилл",
+//         lastName: "Федоров",
+//         avatar: "https://i.pravatar.cc/150?img=12",
+//         grade: "strongJunior",
+//       },
+//       {
+//         _id: "s9",
+//         firstName: "Екатерина",
+//         lastName: "Лебедева",
+//         avatar: "https://i.pravatar.cc/150?img=16",
+//         grade: "middle",
+//       },
+//     ],
+//     avatar: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400",
+//     groupPerformance: 91,
+//     groupTime: "19:30",
+//     groupDay: "even",
+//     telegramId: "@nodejs_backend",
+//     mentor: { _id: "m3", name: "Андрей Кузнецов" },
+//   },
+//   {
+//     _id: "4",
+//     groupName: "Python ML Basics",
+//     groupDescribe: "Machine learning with Python",
+//     students: [
+//       {
+//         _id: "s10",
+//         firstName: "Максим",
+//         lastName: "Соколов",
+//         avatar: "https://i.pravatar.cc/150?img=13",
+//         grade: "senior",
+//       },
+//       {
+//         _id: "s11",
+//         firstName: "София",
+//         lastName: "Попова",
+//         avatar: "https://i.pravatar.cc/150?img=20",
+//         grade: "strongMiddle",
+//       },
+//     ],
+//     avatar:
+//       "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400",
+//     groupPerformance: 95,
+//     groupTime: "14:00",
+//     groupDay: "odd",
+//     telegramId: "@python_ml",
+//     mentor: { _id: "m4", name: "Виктория Орлова" },
+//   },
+//   {
+//     _id: "5",
+//     groupName: "TypeScript Pro",
+//     groupDescribe: "Advanced TypeScript development",
+//     students: [
+//       {
+//         _id: "s12",
+//         firstName: "Артем",
+//         lastName: "Васильев",
+//         avatar: "https://i.pravatar.cc/150?img=14",
+//         grade: "middle",
+//       },
+//       {
+//         _id: "s13",
+//         firstName: "Валерия",
+//         lastName: "Романова",
+//         avatar: "https://i.pravatar.cc/150?img=23",
+//         grade: "strongJunior",
+//       },
+//       {
+//         _id: "s14",
+//         firstName: "Никита",
+//         lastName: "Захаров",
+//         avatar: "https://i.pravatar.cc/150?img=15",
+//         grade: "middle",
+//       },
+//     ],
+//     avatar: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400",
+//     groupPerformance: 84,
+//     groupTime: "17:00",
+//     groupDay: "even",
+//     telegramId: "@ts_pro",
+//     mentor: { _id: "m1", name: "Сергей Николаев" },
+//   },
+//   {
+//     _id: "6",
+//     groupName: "DevOps Essentials",
+//     groupDescribe: "CI/CD and cloud infrastructure",
+//     students: [
+//       {
+//         _id: "s15",
+//         firstName: "Роман",
+//         lastName: "Григорьев",
+//         avatar: "https://i.pravatar.cc/150?img=11",
+//         grade: "senior",
+//       },
+//     ],
+//     avatar:
+//       "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=400",
+//     groupPerformance: 89,
+//     groupTime: "20:00",
+//     groupDay: "odd",
+//     telegramId: "@devops_ess",
+//     mentor: { _id: "m5", name: "Игорь Медведев" },
+//   },
+// ];
+
+const Groups = ({ mockGroups }) => {
+  const [viewMode, setViewMode] = useState("calendar"); // calendar, table, cards
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const gradeColors = {
+    junior: "bg-emerald-100 text-emerald-700",
+    strongJunior: "bg-teal-100 text-teal-700",
+    middle: "bg-blue-100 text-blue-700",
+    strongMiddle: "bg-indigo-100 text-indigo-700",
+    senior: "bg-purple-100 text-purple-700",
+  };
+
+  const gradeLabels = {
+    junior: "Junior",
+    strongJunior: "Strong Junior",
+    middle: "Middle",
+    strongMiddle: "Strong Middle",
+    senior: "Senior",
+  };
+
+  const getPerformanceColor = (performance) => {
+    if (performance >= 90) return "text-emerald-600";
+    if (performance >= 75) return "text-blue-600";
+    if (performance >= 60) return "text-amber-600";
+    return "text-rose-600";
+  };
+
+  const getPerformanceBg = (performance) => {
+    if (performance >= 90) return "bg-emerald-500";
+    if (performance >= 75) return "bg-blue-500";
+    if (performance >= 60) return "bg-amber-500";
+    return "bg-rose-500";
+  };
+
+  // Weekly Calendar View
+  const CalendarView = () => {
+    const timeSlots = ["14:00", "16:00", "17:00", "18:00", "19:30", "20:00"];
+    const days = [
+      { label: "Понедельник", value: "odd" },
+      { label: "Вторник", value: "even" },
+      { label: "Среда", value: "odd" },
+      { label: "Четверг", value: "even" },
+      { label: "Пятница", value: "odd" },
+    ];
+
+    const getGroupsForSlot = (time, dayType) => {
+      return mockGroups.filter(
+        (g) => g.groupTime === time && g.groupDay === dayType
+      );
+    };
+
+    return (
+      <div className="bg-white rounded-xl shadow-lg shadow-slate-900/5 border border-slate-200/60 overflow-hidden ">
+        <div className="overflow-x-auto">
+          <div className="inline-block min-w-full align-middle">
+            <div className="grid grid-cols-6 bg-gradient-to-br from-slate-50 to-slate-100/50">
+              <div className="border-r border-b border-slate-200/60 p-3 bg-white/80">
+                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Время
+                </div>
+              </div>
+              {days.map((day, idx) => (
+                <div
+                  key={idx}
+                  className="border-r last:border-r-0 border-b border-slate-200/60 p-3 bg-white/80"
+                  style={{ animationDelay: `${idx * 50}ms` }}
+                >
+                  <div className="text-sm font-bold text-slate-900">
+                    {day.label}
+                  </div>
+                  <div className="text-xs text-slate-500 mt-0.5">
+                    {day.value === "even" ? "Четные" : "Нечетные"}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {timeSlots.map((time, timeIdx) => (
+              <div
+                key={time}
+                className="grid grid-cols-6 hover:bg-slate-50/50 transition-colors duration-200"
+              >
+                <div className="border-r border-b border-slate-200/60 p-3 bg-gradient-to-r from-white to-slate-50/30">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-slate-400" />
+                    <span className="text-sm font-semibold text-slate-700">
+                      {time}
+                    </span>
+                  </div>
+                </div>
+                {days.map((day, dayIdx) => {
+                  const groups = getGroupsForSlot(time, day.value);
+                  return (
+                    <div
+                      key={dayIdx}
+                      className="border-r last:border-r-0 border-b border-slate-200/60 p-2 min-h-[80px]"
+                    >
+                      {groups.map((group, gIdx) => (
+                        <div
+                          key={group._id}
+                          className="mb-2 last:mb-0 p-2.5 rounded-lg bg-gradient-to-br from-white to-slate-50 border border-slate-200/60 hover:shadow-md hover:shadow-indigo-500/10 transition-all duration-300 cursor-pointer group hover:scale-[1.02] hover:border-indigo-300"
+                          style={{
+                            animationDelay: `${(timeIdx * 5 + dayIdx) * 30}ms`,
+                          }}
+                        >
+                          <div className="flex items-start gap-2">
+                            <img
+                              src={group.avatar}
+                              alt={group.groupName}
+                              className="w-8 h-8 rounded-lg object-cover ring-2 ring-white shadow-sm group-hover:ring-indigo-200 transition-all"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-xs font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                                {group.groupName}
+                              </h4>
+                              <div className="flex items-center gap-1.5 mt-1">
+                                <Users className="w-3 h-3 text-slate-400" />
+                                <span className="text-xs text-slate-500">
+                                  {group.students.length}
+                                </span>
+                                <div
+                                  className={`ml-auto px-1.5 py-0.5 rounded text-xs font-semibold ${getPerformanceColor(group.groupPerformance)} bg-slate-100`}
+                                >
+                                  {group.groupPerformance}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Table View
+  const TableView = () => {
+    return (
+      <div className="bg-white rounded-xl shadow-lg shadow-slate-900/5 border border-slate-200/60 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200/60">
+            <thead className="bg-gradient-to-br from-slate-50 to-slate-100/50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  Группа
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  Студенты
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  Расписание
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  Производительность
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  Telegram
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                  Ментор
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200/60">
+              {mockGroups.map((group, idx) => (
+                <tr
+                  key={group._id}
+                  className="hover:bg-slate-50/70 transition-all duration-200 group cursor-pointer"
+                  style={{ animationDelay: `${idx * 50}ms` }}
+                >
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-2.5">
+                      <img
+                        src={group.avatar}
+                        alt={group.groupName}
+                        className="w-10 h-10 rounded-lg object-cover ring-2 ring-white shadow-md group-hover:ring-indigo-200 transition-all"
+                      />
+                      <div>
+                        <div className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                          {group.groupName}
+                        </div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          {group.groupDescribe}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="flex -space-x-2">
+                        {group.students.slice(0, 3).map((student) => (
+                          <img
+                            key={student._id}
+                            src={student.avatar}
+                            alt={`${student.firstName} ${student.lastName}`}
+                            className="w-7 h-7 rounded-full ring-2 ring-white shadow-sm hover:z-10 transition-transform hover:scale-110"
+                            title={`${student.firstName} ${student.lastName}`}
+                          />
+                        ))}
+                        {group.students.length > 3 && (
+                          <div className="w-7 h-7 rounded-full bg-slate-200 ring-2 ring-white flex items-center justify-center">
+                            <span className="text-xs font-semibold text-slate-600">
+                              +{group.students.length - 3}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-sm text-slate-600 font-medium ml-1">
+                        {group.students.length}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1.5 text-sm font-semibold text-slate-700">
+                        <Clock className="w-3.5 h-3.5 text-indigo-500" />
+                        {group.groupTime}
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {group.groupDay === "even"
+                          ? "📅 Четные дни"
+                          : "📅 Нечетные дни"}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                        <div
+                          className={`h-full ${getPerformanceBg(group.groupPerformance)} rounded-full transition-all duration-500`}
+                          style={{ width: `${group.groupPerformance}%` }}
+                        />
+                      </div>
+                      <span
+                        className={`text-sm font-bold ${getPerformanceColor(group.groupPerformance)}`}
+                      >
+                        {group.groupPerformance}%
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-1.5 text-sm">
+                      <MessageCircle className="w-3.5 h-3.5 text-sky-500" />
+                      <span className="text-sky-600 font-medium hover:text-sky-700 transition-colors">
+                        {group.telegramId}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-1.5 text-sm">
+                      <User className="w-3.5 h-3.5 text-slate-400" />
+                      <span className="text-slate-700 font-medium">
+                        {group.mentor.firstName}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  // Cards View
+  const CardsView = () => {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {mockGroups.map((group, idx) => (
+          <div
+            key={group._id}
+            className="group bg-white rounded-xl shadow-lg shadow-slate-900/5 border border-slate-200/60 overflow-hidden hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:border-indigo-300"
+            style={{ animationDelay: `${idx * 80}ms` }}
+          >
+            {/* Card Header with Image */}
+            <div className="relative h-32 overflow-hidden bg-gradient-to-br from-indigo-500 to-purple-600">
+              <img
+                src={group.avatar}
+                alt={group.groupName}
+                className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
+              {/* Performance Badge */}
+              <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-white/95 backdrop-blur-sm shadow-lg flex items-center gap-1.5">
+                <TrendingUp
+                  className={`w-3.5 h-3.5 ${getPerformanceColor(group.groupPerformance)}`}
+                />
+                <span
+                  className={`text-sm font-bold ${getPerformanceColor(group.groupPerformance)}`}
+                >
+                  {group.groupPerformance}%
+                </span>
+              </div>
+
+              {/* Day Type Badge */}
+              <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-lg bg-white/95 backdrop-blur-sm shadow-lg">
+                <span className="text-xs font-bold text-slate-700">
+                  {group.groupDay === "even" ? "Четные" : "Нечетные"}
+                </span>
+              </div>
+            </div>
+
+            {/* Card Content */}
+            <div className="p-4">
+              <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
+                {group.groupName}
+              </h3>
+              <p className="text-sm text-slate-500 mb-3 line-clamp-2">
+                {group.groupDescribe}
+              </p>
+
+              {/* Schedule */}
+              <div className="flex items-center gap-2 mb-3 p-2.5 rounded-lg bg-slate-50 group-hover:bg-indigo-50/50 transition-colors">
+                <Clock className="w-4 h-4 text-indigo-500" />
+                <span className="text-sm font-bold text-slate-700">
+                  {group.groupTime}
+                </span>
+              </div>
+
+              {/* Students */}
+              <div className="mb-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Студенты
+                  </span>
+                  <span className="text-xs font-semibold text-slate-600">
+                    {group.students.length} чел.
+                  </span>
+                </div>
+                <div className="flex -space-x-2">
+                  {group.students.slice(0, 5).map((student) => (
+                    <div key={student._id} className="relative group/student">
+                      <img
+                        src={student.avatar}
+                        alt={`${student.firstName} ${student.lastName}`}
+                        className="w-8 h-8 rounded-full ring-2 ring-white shadow-md hover:z-10 hover:scale-125 transition-all"
+                      />
+                      {/* Tooltip */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-xs rounded-lg opacity-0 group-hover/student:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20">
+                        {student.firstName} {student.lastName}
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-900" />
+                      </div>
+                    </div>
+                  ))}
+                  {group.students.length > 5 && (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 ring-2 ring-white flex items-center justify-center shadow-md">
+                      <span className="text-xs font-bold text-slate-600">
+                        +{group.students.length - 5}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Grade Distribution */}
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                  {Array.from(new Set(group.students.map((s) => s.grade))).map(
+                    (grade) => {
+                      const count = group.students.filter(
+                        (s) => s.grade === grade
+                      ).length;
+                      return (
+                        <span
+                          key={grade}
+                          className={`px-2 py-0.5 rounded-md text-xs font-semibold ${gradeColors[grade]}`}
+                        >
+                          {gradeLabels[grade]} ({count})
+                        </span>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <div className="flex items-center gap-1.5">
+                  <MessageCircle className="w-3.5 h-3.5 text-sky-500" />
+                  <span className="text-xs text-sky-600 font-medium">
+                    {group.telegramId}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="text-xs text-slate-600 font-medium">
+                    {group.mentor.firstName}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <div className="ml-64 h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50/30 w-full">
+      {/* Header */}
+      <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+                Группы
+              </h1>
+              <p className="text-xs text-slate-500 mt-1">
+                Управление учебными группами и расписанием
+              </p>
+            </div>
+
+            {/* View Mode Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200/60 rounded-lg shadow-sm hover:shadow-md hover:border-indigo-300 transition-all duration-200 group"
+              >
+                <div className="flex items-center gap-2">
+                  {viewMode === "calendar" && (
+                    <Calendar className="w-4 h-4 text-indigo-600" />
+                  )}
+                  {viewMode === "table" && (
+                    <Table className="w-4 h-4 text-indigo-600" />
+                  )}
+                  {viewMode === "cards" && (
+                    <LayoutGrid className="w-4 h-4 text-indigo-600" />
+                  )}
+                  <span className="text-sm font-semibold text-slate-900">
+                    {viewMode === "calendar" && "Календарь"}
+                    {viewMode === "table" && "Таблица"}
+                    {viewMode === "cards" && "Карточки"}
+                  </span>
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-xl shadow-slate-900/10 border border-slate-200/60 overflow-hidden z-10 animate-in slide-in-from-top-2 duration-200">
+                  <button
+                    onClick={() => {
+                      setViewMode("calendar");
+                      setIsDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-all duration-150 ${
+                      viewMode === "calendar"
+                        ? "bg-indigo-50 text-indigo-600 font-semibold"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>Календарь</span>
+                    {viewMode === "calendar" && (
+                      <div className="ml-auto w-1 h-5 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setViewMode("table");
+                      setIsDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-all duration-150 ${
+                      viewMode === "table"
+                        ? "bg-indigo-50 text-indigo-600 font-semibold"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <Table className="w-4 h-4" />
+                    <span>Таблица</span>
+                    {viewMode === "table" && (
+                      <div className="ml-auto w-1 h-5 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setViewMode("cards");
+                      setIsDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-all duration-150 ${
+                      viewMode === "cards"
+                        ? "bg-indigo-50 text-indigo-600 font-semibold"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                    <span>Карточки</span>
+                    {viewMode === "cards" && (
+                      <div className="ml-auto w-1 h-5 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
+                    )}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="px-6 py-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-5 shadow-lg shadow-indigo-500/20 text-white">
+            <div className="flex items-center justify-between mb-2">
+              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                <Users className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-2xl font-black mb-0.5">
+              {mockGroups.length}
+            </div>
+            <div className="text-xs font-medium opacity-90">Всего групп</div>
+          </div>
+
+          <div className="bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl p-5 shadow-lg shadow-slate-500/20 text-white">
+            <div className="flex items-center justify-between mb-2">
+              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                <User className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-2xl font-black mb-0.5">
+              {mockGroups.reduce((acc, g) => acc + g.students.length, 0)}
+            </div>
+            <div className="text-xs font-medium opacity-90">Студентов</div>
+          </div>
+
+          <div className="bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-xl p-5 shadow-lg shadow-indigo-400/20 text-white">
+            <div className="flex items-center justify-between mb-2">
+              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-2xl font-black mb-0.5">
+              {Math.round(
+                mockGroups.reduce((acc, g) => acc + g.groupPerformance, 0) /
+                  mockGroups.length
+              )}
+              %
+            </div>
+            <div className="text-xs font-medium opacity-90">
+              Средняя производительность
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl p-5 shadow-lg shadow-slate-400/20 text-white">
+            <div className="flex items-center justify-between mb-2">
+              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                <MessageCircle className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-2xl font-black mb-0.5">
+              {mockGroups.filter((g) => g.telegramId).length}
+            </div>
+            <div className="text-xs font-medium opacity-90">Telegram-групп</div>
+          </div>
+        </div>
+
+        {/* View Content */}
+        {viewMode === "calendar" && <CalendarView />}
+        {viewMode === "table" && <TableView />}
+        {viewMode === "cards" && <CardsView />}
+      </div>
+    </div>
+  );
+};
+
+export default Groups;
+
+
+1️⃣ Общая структура и стили
+
+Sidebar
+
+Фиксированная ширина: w-64 (примерно 256px)
+
+Высота: min-h-screen max-h-screen → всегда на всю высоту окна
+
+Фон: bg-white
+
+Граница справа: border-r border-slate-200/60
+
+Тень: shadow-xl shadow-slate-900/5
+
+Вертикальный flex-контейнер: flex flex-col
+
+Скролл при необходимости: overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent
+
+Header (логотип)
+
+Отступы: p-5 pb-4
+
+Нижняя граница: border-b border-slate-200/60
+
+Можно просто вставить логотип с img
+
+2️⃣ Кнопки меню (разделы)
+
+Каждая секция (Home, Groups, Students, Exams) — это кнопка с раскрывающимся подменю.
+
+Стили кнопки
+
+Полная ширина: w-full
+
+Flex: flex items-center justify-between (иконка слева, стрелка справа)
+
+Отступы: px-3 py-2.5
+
+Скругление: rounded-lg
+
+Цвет текста и фон:
+
+Активная секция: bg-slate-100 text-slate-900
+
+Неактивная: text-slate-700 hover:bg-slate-50 hover:text-slate-900
+
+Плавные переходы: transition-all duration-200
+
+Иконки
+
+Размер: w-[18px] h-[18px]
+
+Цвет меняется при активной секции: text-indigo-600 или text-slate-500
+
+Hover эффект: group-hover:text-slate-700
+
+Стрелка раскрытия
+
+Размер: w-4 h-4
+
+Поворот при раскрытии: rotate-180
+
+Цвет: text-slate-400
+
+3️⃣ Подменю (раскрывающиеся ссылки)
+
+Отступ слева: ml-9
+
+Отступ сверху/снизу: mt-1 mb-2
+
+Пространство между ссылками: space-y-1
+
+Анимация раскрытия: animate-in slide-in-from-top-2 duration-200
+
+Стили ссылок:
+
+Активная: text-slate-900 bg-slate-100 font-medium
+
+Неактивная: text-slate-600 hover:text-slate-900 hover:bg-slate-50
+
+Размер текста: text-[13px]
+
+Скругление: rounded-md
+
+Плавный переход: transition-all duration-150
+
+4️⃣ Взаимодействие (поведение)
+
+Нажатие на кнопку раздела
+
+Если раздел закрыт → раскрывается, стрелка поворачивается (rotate-180)
+
+Если раздел открыт → может перейти на главную страницу раздела
+
+Hover эффекты
+
+Подсветка кнопки: hover:bg-slate-50 hover:text-slate-900
+
+Подсветка активной линии слева: градиентная линия слева (w-0.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-500)
+
+Для неактивных элементов градиент появляется при hover
+
+5️⃣ Bottom section и профиль
+
+Bottom section
+
+Разделение от меню: border-t border-slate-200/60
+
+Кнопки с иконками и hover эффектами, как у меню
+
+Профиль
+
+Аватар с кольцом: w-9 h-9 rounded-full ring-2 ring-white shadow-md
+
+Статус онлайн: маленький круг w-3 h-3 bg-emerald-500 border-2 border-white rounded-full
+
+Имя и email: text-[13px] font-semibold и text-[12px] text-slate-500
+
+6️⃣ Основные принципы для страниц под Sidebar
+
+Контент страниц располагается справа от Sidebar, занимает оставшуюся ширину (flex-1).
+
+Подменю выпадает сверху вниз, смещается вправо (ml-9).
+
+Раскрытие/закрытие подменю управляется состоянием isExpanded.
+
+Hover и активные состояния подчеркиваются цветом и градиентной линией слева.
+
+
+делай под ето описание похожим на сайдбар но сам сайдбар на страницу не добавляй

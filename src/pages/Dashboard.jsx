@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import WelcomeSplash from "../components/WelcomeSplash";
 import axios from "axios";
-import { SidebarNavigationSimpleDemo } from "../components/SideBar";
+import Home from "./Home";
+import Sidebar from "../components/Sidebar";
 import BigLoader from "../components/BigLoader";
+import { Route, Routes } from "react-router-dom";
+import Groups from "./Groups";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(false);
@@ -14,7 +17,7 @@ const Dashboard = () => {
       const token = localStorage.getItem("token");
 
       const req = await axios.get(
-        import.meta.env.VITE_BACKEND_API + "/api/user/me",
+        import.meta.env.VITE_BACKEND_API + "/api/mentor/dashboard",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -22,7 +25,8 @@ const Dashboard = () => {
         }
       );
 
-      setUser(req.data.user);
+      console.log(req.data);
+      setUser(req.data);
       setShowSplash(true);
 
       const splashWasShown = sessionStorage.getItem("welcomeShown");
@@ -49,24 +53,32 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Splash screen */}
-      {showSplash && user && (
-        <WelcomeSplash
-          firstName={user.firstName}
-          lastName={user.lastName}
-          onFinish={handleSplashFinish}
-          duration={3000}
-        />
-      )}
 
-      {/* Основной контент */}
-      {!showSplash && (
-        <div className="p-6">
-          <SidebarNavigationSimpleDemo />
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+      {user ? (
+        <div className="h-screen flex gap-10">
+          <Sidebar user={user.mentor} />
+
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  exams={user.exams}
+                  students={user.students}
+                  groups={user.groups}
+                />
+              }
+            />
+
+            <Route
+              path="/groups"
+              element={<Groups mockGroups={user.groups} />}
+            />
+          </Routes>
         </div>
+      ) : (
+        <BigLoader />
       )}
-
-      {loader && <BigLoader />}
     </div>
   );
 };
