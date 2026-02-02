@@ -27,15 +27,31 @@ const Sidebar = ({ user }) => {
   // Автоматически раскрывать секцию при переходе на страницу
   useEffect(() => {
     const path = location.pathname;
-    if (path.startsWith("/dashboard")) {
-      setIsExpanded((prev) => ({ ...prev, home: true }));
-    } else if (path.startsWith("/groups")) {
-      setIsExpanded((prev) => ({ ...prev, groups: true }));
-    } else if (path.startsWith("/students")) {
-      setIsExpanded((prev) => ({ ...prev, students: true }));
-    } else if (path.startsWith("/exams")) {
-      setIsExpanded((prev) => ({ ...prev, exams: true }));
+
+    // Закрываем все секции сначала
+    const newExpanded = {
+      home: false,
+      groups: false,
+      students: false,
+      exams: false,
+    };
+
+    // Открываем только нужную секцию
+    if (
+      path === "/dashboard" ||
+      path.startsWith("/dashboard/analytics") ||
+      path.startsWith("/dashboard/notifications")
+    ) {
+      newExpanded.home = true;
+    } else if (path.startsWith("/dashboard/groups")) {
+      newExpanded.groups = true;
+    } else if (path.startsWith("/dashboard/students")) {
+      newExpanded.students = true;
+    } else if (path.startsWith("/dashboard/exams")) {
+      newExpanded.exams = true;
     }
+
+    setIsExpanded(newExpanded);
   }, [location.pathname]);
 
   const handleNavClick = (item, mainPath) => {
@@ -45,7 +61,10 @@ const Sidebar = ({ user }) => {
     } else {
       // Если закрыта, открываем и переходим
       setIsExpanded((prev) => ({
-        ...prev,
+        home: false,
+        groups: false,
+        students: false,
+        exams: false,
         [item]: true,
       }));
       navigate(mainPath);
@@ -69,7 +88,7 @@ const Sidebar = ({ user }) => {
   };
 
   return (
-    <div className="w-64 bg-white border-r border-slate-200/60 flex flex-col  shadow-xl shadow-slate-900/5 min-h-screen max-h-screen fixed left-0">
+    <div className="w-64 bg-white border-r border-slate-200/60 flex flex-col shadow-xl shadow-slate-900/5 min-h-screen max-h-screen fixed left-0 top-0 z-50">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-300/50 to-transparent"></div>
       <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-300/50 to-transparent"></div>
@@ -84,9 +103,12 @@ const Sidebar = ({ user }) => {
         {/* Home */}
         <div>
           <button
-            onClick={() => handleNavClick("dashboard", "/dashboard")}
+            onClick={() => handleNavClick("home", "/dashboard")}
             className={`w-full group relative flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200 ${
-              isParentActive(["/home"])
+              isParentActive(["/dashboard"]) &&
+              !location.pathname.startsWith("/dashboard/groups") &&
+              !location.pathname.startsWith("/dashboard/students") &&
+              !location.pathname.startsWith("/dashboard/exams")
                 ? "bg-slate-100 text-slate-900"
                 : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
             }`}
@@ -94,7 +116,10 @@ const Sidebar = ({ user }) => {
             <div className="flex items-center gap-3">
               <Home
                 className={`w-[18px] h-[18px] transition-colors duration-200 ${
-                  isParentActive(["/dashboard"])
+                  isParentActive(["/dashboard"]) &&
+                  !location.pathname.startsWith("/dashboard/groups") &&
+                  !location.pathname.startsWith("/dashboard/students") &&
+                  !location.pathname.startsWith("/dashboard/exams")
                     ? "text-indigo-600"
                     : "text-slate-500 group-hover:text-slate-700"
                 }`}
@@ -102,10 +127,13 @@ const Sidebar = ({ user }) => {
               <span className="text-[14px] font-medium">Home</span>
             </div>
             <ChevronDown
-              onClick={(e) => toggleExpand("dashboard", e)}
+              onClick={(e) => toggleExpand("home", e)}
               className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isExpanded.home ? "rotate-180" : ""}`}
             />
-            {isParentActive(["/dashboard"]) ? (
+            {isParentActive(["/dashboard"]) &&
+            !location.pathname.startsWith("/dashboard/groups") &&
+            !location.pathname.startsWith("/dashboard/students") &&
+            !location.pathname.startsWith("/dashboard/exams") ? (
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-r-full"></div>
             ) : (
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-r-full opacity-0 group-hover:h-8 group-hover:opacity-100 transition-all duration-300"></div>
@@ -125,9 +153,9 @@ const Sidebar = ({ user }) => {
                 Dashboard
               </Link>
               <Link
-                to="/home/analytics"
+                to="/dashboard/analytics"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/home/analytics")
+                  isActive("/dashboard/analytics")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -135,9 +163,9 @@ const Sidebar = ({ user }) => {
                 Analytics
               </Link>
               <Link
-                to="/home/notifications"
+                to="/dashboard/notifications"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/home/notifications")
+                  isActive("/dashboard/notifications")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -153,7 +181,7 @@ const Sidebar = ({ user }) => {
           <button
             onClick={() => handleNavClick("groups", "/dashboard/groups")}
             className={`w-full group relative flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200 ${
-              isParentActive(["/groups"])
+              isParentActive(["/dashboard/groups"])
                 ? "bg-slate-100 text-slate-900"
                 : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
             }`}
@@ -192,9 +220,9 @@ const Sidebar = ({ user }) => {
                 All Groups
               </Link>
               <Link
-                to="/groups/create"
+                to="/dashboard/groups/create"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/groups/create")
+                  isActive("/dashboard/groups/create")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -202,9 +230,9 @@ const Sidebar = ({ user }) => {
                 Create Group
               </Link>
               <Link
-                to="/groups/archive"
+                to="/dashboard/groups/archive"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/groups/archive")
+                  isActive("/dashboard/groups/archive")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -218,9 +246,9 @@ const Sidebar = ({ user }) => {
         {/* Students */}
         <div>
           <button
-            onClick={() => handleNavClick("students", "/students/all")}
+            onClick={() => handleNavClick("students", "/dashboard/students")}
             className={`w-full group relative flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200 ${
-              isParentActive(["/students"])
+              isParentActive(["/dashboard/students"])
                 ? "bg-slate-100 text-slate-900"
                 : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
             }`}
@@ -228,7 +256,7 @@ const Sidebar = ({ user }) => {
             <div className="flex items-center gap-3">
               <GraduationCap
                 className={`w-[18px] h-[18px] transition-colors duration-200 ${
-                  isParentActive(["/students"])
+                  isParentActive(["/dashboard/students"])
                     ? "text-indigo-600"
                     : "text-slate-500 group-hover:text-slate-700"
                 }`}
@@ -239,7 +267,7 @@ const Sidebar = ({ user }) => {
               onClick={(e) => toggleExpand("students", e)}
               className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isExpanded.students ? "rotate-180" : ""}`}
             />
-            {isParentActive(["/students"]) ? (
+            {isParentActive(["/dashboard/students"]) ? (
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-r-full"></div>
             ) : (
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-r-full opacity-0 group-hover:h-8 group-hover:opacity-100 transition-all duration-300"></div>
@@ -249,9 +277,9 @@ const Sidebar = ({ user }) => {
           {isExpanded.students && (
             <div className="ml-9 mt-1 mb-2 space-y-1 animate-in slide-in-from-top-2 duration-200">
               <Link
-                to="/students/all"
+                to="/dashboard/students"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/students/all")
+                  isActive("/dashboard/students")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -259,9 +287,9 @@ const Sidebar = ({ user }) => {
                 All Students
               </Link>
               <Link
-                to="/students/add"
+                to="/dashboard/students/add"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/students/add")
+                  isActive("/dashboard/students/add")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -269,9 +297,9 @@ const Sidebar = ({ user }) => {
                 Add Student
               </Link>
               <Link
-                to="/students/progress"
+                to="/dashboard/students/progress"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/students/progress")
+                  isActive("/dashboard/students/progress")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -279,9 +307,9 @@ const Sidebar = ({ user }) => {
                 Progress Tracking
               </Link>
               <Link
-                to="/students/grades"
+                to="/dashboard/students/grades"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/students/grades")
+                  isActive("/dashboard/students/grades")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -295,9 +323,9 @@ const Sidebar = ({ user }) => {
         {/* Exams */}
         <div>
           <button
-            onClick={() => handleNavClick("exams", "/exams/all")}
+            onClick={() => handleNavClick("exams", "/dashboard/exams")}
             className={`w-full group relative flex items-center justify-between px-3 py-2.5 rounded-lg transition-all duration-200 ${
-              isParentActive(["/exams"])
+              isParentActive(["/dashboard/exams"])
                 ? "bg-slate-100 text-slate-900"
                 : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
             }`}
@@ -305,7 +333,7 @@ const Sidebar = ({ user }) => {
             <div className="flex items-center gap-3">
               <FileText
                 className={`w-[18px] h-[18px] transition-colors duration-200 ${
-                  isParentActive(["/exams"])
+                  isParentActive(["/dashboard/exams"])
                     ? "text-indigo-600"
                     : "text-slate-500 group-hover:text-slate-700"
                 }`}
@@ -316,7 +344,7 @@ const Sidebar = ({ user }) => {
               onClick={(e) => toggleExpand("exams", e)}
               className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isExpanded.exams ? "rotate-180" : ""}`}
             />
-            {isParentActive(["/exams"]) ? (
+            {isParentActive(["/dashboard/exams"]) ? (
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-r-full"></div>
             ) : (
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-0 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-r-full opacity-0 group-hover:h-8 group-hover:opacity-100 transition-all duration-300"></div>
@@ -325,9 +353,9 @@ const Sidebar = ({ user }) => {
           {isExpanded.exams && (
             <div className="ml-9 mt-1 mb-2 space-y-1 animate-in slide-in-from-top-2 duration-200">
               <Link
-                to="/exams/all"
+                to="/dashboard/exams"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/exams/all")
+                  isActive("/dashboard/exams")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -335,9 +363,9 @@ const Sidebar = ({ user }) => {
                 All Exams
               </Link>
               <Link
-                to="/exams/create"
+                to="/dashboard/exams/create"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/exams/create")
+                  isActive("/dashboard/exams/create")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -345,9 +373,9 @@ const Sidebar = ({ user }) => {
                 Create Exam
               </Link>
               <Link
-                to="/exams/grading"
+                to="/dashboard/exams/grading"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/exams/grading")
+                  isActive("/dashboard/exams/grading")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -355,9 +383,9 @@ const Sidebar = ({ user }) => {
                 Grading
               </Link>
               <Link
-                to="/exams/schedule"
+                to="/dashboard/exams/schedule"
                 className={`block px-3 py-1.5 text-[13px] rounded-md transition-all duration-150 ${
-                  isActive("/exams/schedule")
+                  isActive("/dashboard/exams/schedule")
                     ? "text-slate-900 bg-slate-100 font-medium"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
@@ -373,7 +401,7 @@ const Sidebar = ({ user }) => {
       <div className="px-3 py-3 space-y-0.5 border-t border-slate-200/60">
         {/* Settings */}
         <Link
-          to="/settings"
+          to="/dashboard/settings"
           className="w-full group relative flex items-center justify-between px-3 py-2.5 text-slate-700 rounded-lg hover:bg-slate-50 transition-all duration-200 hover:text-slate-900"
         >
           <div className="flex items-center gap-3">
@@ -384,7 +412,7 @@ const Sidebar = ({ user }) => {
 
         {/* Support */}
         <Link
-          to="/support"
+          to="/dashboard/support"
           className="w-full group relative flex items-center justify-between px-3 py-2.5 text-slate-700 rounded-lg hover:bg-slate-50 transition-all duration-200 hover:text-slate-900"
         >
           <div className="flex items-center gap-3">

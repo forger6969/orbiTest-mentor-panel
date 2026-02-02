@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import BigLoader from "../components/BigLoader";
 import { Route, Routes } from "react-router-dom";
 import Groups from "./Groups";
+import Students from "./Students";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(false);
@@ -73,6 +74,11 @@ const Dashboard = () => {
             <Route
               path="/groups"
               element={<Groups mockGroups={user.groups} />}
+            />
+
+            <Route
+              path="/students"
+              element={<Students students={user.students} />}
             />
           </Routes>
         </div>
