@@ -56,14 +56,23 @@ const Groups = ({ mockGroups }) => {
   // Получаем все уникальные времена из групп динамически + базовые времена
   const getAllTimes = () => {
     // Базовый набор времен, который всегда должен быть
-    const defaultTimes = ["14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "19:30", "20:00"];
-    
+    const defaultTimes = [
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "19:30",
+      "20:00",
+    ];
+
     // Времена из групп
     const groupTimes = mockGroups.map((g) => g.groupTime);
-    
+
     // Объединяем и удаляем дубликаты
     const allTimes = [...new Set([...defaultTimes, ...groupTimes])];
-    
+
     // Сортируем по возрастанию
     return allTimes.sort((a, b) => {
       const [aHour, aMin] = a.split(":").map(Number);
@@ -81,7 +90,7 @@ const Groups = ({ mockGroups }) => {
       { label: "Среда", value: "odd", short: "Ср" },
       { label: "Четверг", value: "even", short: "Чт" },
       { label: "Пятница", value: "odd", short: "Пт" },
-      { label: "Суббота", value: "saturday", short: "Сб" },
+      { label: "Суббота", value: "even", short: "Сб" },
     ];
 
     const getGroupsForSlot = (time, dayType) => {
@@ -109,11 +118,7 @@ const Groups = ({ mockGroups }) => {
                     {day.label}
                   </div>
                   <div className="text-xs text-slate-500 mt-0.5">
-                    {day.value === "even"
-                      ? "Четные"
-                      : day.value === "odd"
-                        ? "Нечетные"
-                        : "Каждую"}
+                    {day.value === "even" ? "Четные" : "Нечетные"}
                   </div>
                 </div>
               ))}
@@ -270,10 +275,7 @@ const Groups = ({ mockGroups }) => {
                     <div className="flex items-center gap-2.5">
                       <div className="avatar">
                         <div className="w-10 h-10 rounded-lg ring-2 ring-slate-200">
-                          <img
-                            src={group.avatar}
-                            alt={group.groupName}
-                          />
+                          <img src={group.avatar} alt={group.groupName} />
                         </div>
                       </div>
                       <div>
@@ -324,9 +326,7 @@ const Groups = ({ mockGroups }) => {
                       <div className="text-xs text-slate-500">
                         {group.groupDay === "even"
                           ? "📅 Четные дни"
-                          : group.groupDay === "saturday"
-                            ? "📅 Суббота"
-                            : "📅 Нечетные дни"}
+                          : "📅 Нечетные дни"}
                       </div>
                     </div>
                   </td>
@@ -362,16 +362,28 @@ const Groups = ({ mockGroups }) => {
                   </td>
                   <td>
                     <div className="flex items-center gap-1">
-                      <button className="btn btn-ghost btn-xs btn-circle tooltip" data-tip="Редактировать">
+                      <button
+                        className="btn btn-ghost btn-xs btn-circle tooltip"
+                        data-tip="Редактировать"
+                      >
                         <Edit2 className="w-4 h-4 text-slate-500 hover:text-slate-700" />
                       </button>
-                      <button className="btn btn-ghost btn-xs btn-circle tooltip" data-tip="Удалить">
+                      <button
+                        className="btn btn-ghost btn-xs btn-circle tooltip"
+                        data-tip="Удалить"
+                      >
                         <Trash2 className="w-4 h-4 text-slate-400 hover:text-red-600" />
                       </button>
-                      <button className="btn btn-ghost btn-xs btn-circle tooltip" data-tip="Настройки">
+                      <button
+                        className="btn btn-ghost btn-xs btn-circle tooltip"
+                        data-tip="Настройки"
+                      >
                         <Settings className="w-4 h-4 text-slate-500 hover:text-slate-700" />
                       </button>
-                      <button className="btn btn-ghost btn-xs btn-circle tooltip" data-tip="Архивировать">
+                      <button
+                        className="btn btn-ghost btn-xs btn-circle tooltip"
+                        data-tip="Архивировать"
+                      >
                         <Archive className="w-4 h-4 text-slate-500 hover:text-slate-700" />
                       </button>
                     </div>
@@ -418,11 +430,7 @@ const Groups = ({ mockGroups }) => {
               {/* Day Type Badge */}
               <div className="badge badge-ghost absolute top-2.5 left-2.5 bg-white/95 border-0 shadow-lg">
                 <span className="text-xs font-bold text-slate-700">
-                  {group.groupDay === "even"
-                    ? "Четные"
-                    : group.groupDay === "saturday"
-                      ? "Суббота"
-                      : "Нечетные"}
+                  {group.groupDay === "even" ? "Четные" : "Нечетные"}
                 </span>
               </div>
             </figure>
@@ -601,63 +609,63 @@ const Groups = ({ mockGroups }) => {
       <div className="px-6 py-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="stats shadow-lg border border-slate-200 bg-slate-700 text-white">
-          <div className="stat">
-            <div className="stat-figure text-white">
-              <Users className="w-8 h-8" />
+          <div className="stats shadow-lg border border-slate-200 bg-slate-700 text-white">
+            <div className="stat">
+              <div className="stat-figure text-white">
+                <Users className="w-8 h-8" />
+              </div>
+              <div className="stat-title text-slate-300">Всего групп</div>
+              <div className="stat-value text-white">{mockGroups.length}</div>
             </div>
-            <div className="stat-title text-slate-300">Всего групп</div>
-            <div className="stat-value text-white">{mockGroups.length}</div>
+          </div>
+
+          <div className="stats shadow-lg border border-slate-200 bg-slate-600 text-white">
+            <div className="stat">
+              <div className="stat-figure text-white">
+                <User className="w-8 h-8" />
+              </div>
+              <div className="stat-title text-slate-300">Студентов</div>
+              <div className="stat-value text-white">
+                {mockGroups.reduce((acc, g) => acc + g.students.length, 0)}
+              </div>
+            </div>
+          </div>
+
+          <div className="stats shadow-lg border border-slate-200 bg-slate-500 text-white">
+            <div className="stat">
+              <div className="stat-figure text-white">
+                <TrendingUp className="w-8 h-8" />
+              </div>
+              <div className="stat-title text-slate-300">
+                Средняя производительность
+              </div>
+              <div className="stat-value text-white">
+                {Math.round(
+                  mockGroups.reduce((acc, g) => acc + g.groupPerformance, 0) /
+                    mockGroups.length
+                )}
+                %
+              </div>
+            </div>
+          </div>
+
+          <div className="stats shadow-lg border border-slate-200 bg-slate-400 text-white">
+            <div className="stat">
+              <div className="stat-figure text-white">
+                <MessageCircle className="w-8 h-8" />
+              </div>
+              <div className="stat-title text-slate-700">Telegram-групп</div>
+              <div className="stat-value text-white">
+                {mockGroups.filter((g) => g.telegramId).length}
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="stats shadow-lg border border-slate-200 bg-slate-600 text-white">
-          <div className="stat">
-            <div className="stat-figure text-white">
-              <User className="w-8 h-8" />
-            </div>
-            <div className="stat-title text-slate-300">Студентов</div>
-            <div className="stat-value text-white">
-              {mockGroups.reduce((acc, g) => acc + g.students.length, 0)}
-            </div>
-          </div>
-        </div>
-
-        <div className="stats shadow-lg border border-slate-200 bg-slate-500 text-white">
-          <div className="stat">
-            <div className="stat-figure text-white">
-              <TrendingUp className="w-8 h-8" />
-            </div>
-            <div className="stat-title text-slate-300">
-              Средняя производительность
-            </div>
-            <div className="stat-value text-white">
-              {Math.round(
-                mockGroups.reduce((acc, g) => acc + g.groupPerformance, 0) /
-                  mockGroups.length
-              )}
-              %
-            </div>
-          </div>
-        </div>
-
-        <div className="stats shadow-lg border border-slate-200 bg-slate-400 text-white">
-          <div className="stat">
-            <div className="stat-figure text-white">
-              <MessageCircle className="w-8 h-8" />
-            </div>
-            <div className="stat-title text-slate-700">Telegram-групп</div>
-            <div className="stat-value text-white">
-              {mockGroups.filter((g) => g.telegramId).length}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* View Content */}
-      {viewMode === "calendar" && <CalendarView />}
-      {viewMode === "table" && <TableView />}
-      {viewMode === "cards" && <CardsView />}
+        {/* View Content */}
+        {viewMode === "calendar" && <CalendarView />}
+        {viewMode === "table" && <TableView />}
+        {viewMode === "cards" && <CardsView />}
       </div>
     </div>
   );
