@@ -26,7 +26,7 @@ const AuthPage = () => {
     try {
       setLoader(true);
       const req = await axios.post(
-        import.meta.env.VITE_BACKEND_API + "/api/auth/login",
+        import.meta.env.VITE_BACKEND_API + "/api/mentor/login",
         { email, password }
       );
 
