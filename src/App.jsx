@@ -28,7 +28,6 @@ const App = () => {
         limit={3}
         hideProgressBar={false}
         theme="dark"
-        toastClassName="bg-transparent"
         bodyClassName="p-0"
         progressClassName="bg-white"
       />

@@ -6,6 +6,8 @@ import {
   Award,
   BookOpen,
   Clock,
+  TrendingUp,
+  MessageCircle,
 } from "lucide-react";
 import {
   Chart as ChartJS,
@@ -167,21 +169,15 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
           label: "Средний балл",
           data: topGroups.map((g) => g.groupPerformance || 0),
           backgroundColor: [
-            "rgba(99, 102, 241, 0.8)",
-            "rgba(139, 92, 246, 0.8)",
-            "rgba(236, 72, 153, 0.8)",
-            "rgba(251, 146, 60, 0.8)",
-            "rgba(34, 197, 94, 0.8)",
+            "rgba(71, 85, 105, 0.8)",
+            "rgba(100, 116, 139, 0.8)",
+            "rgba(148, 163, 184, 0.8)",
+            "rgba(71, 85, 105, 0.9)",
+            "rgba(51, 65, 85, 0.8)",
           ],
-          borderColor: [
-            "rgb(99, 102, 241)",
-            "rgb(139, 92, 246)",
-            "rgb(236, 72, 153)",
-            "rgb(251, 146, 60)",
-            "rgb(34, 197, 94)",
-          ],
-          borderWidth: 2,
-          borderRadius: 8,
+          borderColor: "transparent",
+          borderWidth: 0,
+          borderRadius: 6,
         },
       ],
     };
@@ -199,18 +195,13 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
         {
           data: topGroups.map((g) => g.students?.length || 0),
           backgroundColor: [
-            "rgba(99, 102, 241, 0.8)",
-            "rgba(139, 92, 246, 0.8)",
-            "rgba(236, 72, 153, 0.8)",
-            "rgba(251, 146, 60, 0.8)",
+            "rgba(51, 65, 85, 0.9)",
+            "rgba(71, 85, 105, 0.85)",
+            "rgba(100, 116, 139, 0.8)",
+            "rgba(148, 163, 184, 0.75)",
           ],
-          borderColor: [
-            "rgb(99, 102, 241)",
-            "rgb(139, 92, 246)",
-            "rgb(236, 72, 153)",
-            "rgb(251, 146, 60)",
-          ],
-          borderWidth: 2,
+          borderColor: "#fff",
+          borderWidth: 3,
         },
       ],
     };
@@ -225,13 +216,14 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
         display: false,
       },
       tooltip: {
-        backgroundColor: "rgba(15, 23, 42, 0.9)",
+        backgroundColor: "rgba(30, 41, 59, 0.95)",
         padding: 12,
-        borderColor: "rgba(148, 163, 184, 0.2)",
+        borderColor: "rgba(148, 163, 184, 0.3)",
         borderWidth: 1,
         titleColor: "#fff",
         bodyColor: "#fff",
         cornerRadius: 8,
+        displayColors: false,
       },
     },
     scales: {
@@ -242,7 +234,10 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
           drawBorder: false,
         },
         ticks: {
-          color: "#64748b",
+          color: "#94a3b8",
+          font: {
+            size: 11,
+          },
         },
       },
       x: {
@@ -251,7 +246,10 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
           drawBorder: false,
         },
         ticks: {
-          color: "#64748b",
+          color: "#94a3b8",
+          font: {
+            size: 11,
+          },
         },
       },
     },
@@ -266,45 +264,56 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
         position: "bottom",
         labels: {
           padding: 15,
-          color: "#475569",
+          color: "#64748b",
           font: {
             size: 12,
+            family: "'Inter', sans-serif",
           },
+          usePointStyle: true,
+          pointStyle: "circle",
         },
       },
       tooltip: {
-        backgroundColor: "rgba(15, 23, 42, 0.9)",
+        backgroundColor: "rgba(30, 41, 59, 0.95)",
         padding: 12,
-        borderColor: "rgba(148, 163, 184, 0.2)",
+        borderColor: "rgba(148, 163, 184, 0.3)",
         borderWidth: 1,
         cornerRadius: 8,
+        displayColors: true,
       },
     },
-    cutout: "70%",
+    cutout: "65%",
   };
 
   // Данные карточек статистики
   const statsCards = [
     {
-      title: "Всего студентов",
-      value: stats.totalStudents.toLocaleString(),
-      change: "+12%",
+      title: "Всего групп",
+      value: actualGroups.length.toString(),
       icon: Users,
-      gradient: "from-indigo-500 to-purple-500",
+      bgColor: "bg-slate-600",
+      textColor: "text-white",
     },
     {
-      title: "Активные группы",
-      value: stats.activeGroups.toString(),
-      change: "+3",
+      title: "Студентов",
+      value: stats.totalStudents.toLocaleString(),
       icon: UserCheck,
-      gradient: "from-purple-500 to-pink-500",
+      bgColor: "bg-slate-500",
+      textColor: "text-white",
     },
     {
-      title: "Экзамены сегодня",
-      value: stats.todayExams.toString(),
-      change: `${stats.completedToday} завершено`,
-      icon: Calendar,
-      gradient: "from-orange-500 to-amber-500",
+      title: "Средняя производительность",
+      value: "0%",
+      icon: TrendingUp,
+      bgColor: "bg-slate-400",
+      textColor: "text-white",
+    },
+    {
+      title: "Telegram-групп",
+      value: "0",
+      icon: MessageCircle,
+      bgColor: "bg-slate-300",
+      textColor: "text-slate-700",
     },
   ];
 
@@ -317,6 +326,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
       subject: group.groupDescribe || "Не указано",
       status: group.students?.length > 0 ? "active" : "inactive",
       avatar: group.avatar,
+      performance: group.groupPerformance || 0,
     }));
   }, [actualGroups]);
 
@@ -347,170 +357,243 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
   }, [actualExams]);
 
   return (
-    <div className="min-h-screen p-8 mx-auto w-[70%]">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">
-          Добро пожаловать! 👋
-        </h1>
-        <p className="text-slate-600">
-          Вот что происходит в вашей системе сегодня
-        </p>
-      </div>
+    <div className="min-h-screen p-8 mx-auto   w-[70%]">
+      <div className="min-h-screen  p-8 mx-auto w-[120%]
+        ml-10
+ ">
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {statsCards.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div
-                className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center shadow-lg`}
-              >
-                <stat.icon className="w-6 h-6 text-white" />
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-800 mb-1">
+            Группы
+          </h1>
+          <p className="text-slate-500 text-sm">
+            Управление учебными группами и расписанием
+          </p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          {statsCards.map((stat, index) => (
+            <div
+              key={index}
+              className={`${stat.bgColor} rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow`}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className={`text-sm ${stat.textColor} opacity-90 mb-2`}>
+                    {stat.title}
+                  </p>
+                  <p className={`text-4xl font-bold ${stat.textColor}`}>
+                    {stat.value}
+                  </p>
+                </div>
+                <div className={`${stat.textColor} opacity-70`}>
+                  <stat.icon className="w-8 h-8" strokeWidth={1.5} />
+                </div>
               </div>
-              <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-                {stat.change}
-              </span>
             </div>
-            <h3 className="text-sm font-medium text-slate-600 mb-1">
-              {stat.title}
-            </h3>
-            <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Performance Chart */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 mb-1">
-                Успеваемость по группам
-              </h3>
-              <p className="text-sm text-slate-600">Средний балл топ-5 групп</p>
-            </div>
-            <Award className="w-5 h-5 text-purple-600" />
-          </div>
-          <div className="h-64">
-            <Bar data={performanceData} options={chartOptions} />
-          </div>
+          ))}
         </div>
 
-        {/* Student Distribution */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 mb-1">
-                Распределение студентов
-              </h3>
-              <p className="text-sm text-slate-600">По группам (топ-4)</p>
-            </div>
-            <Users className="w-5 h-5 text-pink-600" />
+        {/* Group Cards Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-semibold text-slate-700">
+              Активные группы
+            </h2>
+            <button className="text-sm text-slate-500 hover:text-slate-700 transition-colors">
+              Посмотреть все →
+            </button>
           </div>
-          <div className="h-64">
-            <Doughnut
-              data={studentDistributionData}
-              options={doughnutOptions}
-            />
-          </div>
-        </div>
-      </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Groups */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-slate-900">
-              Последние группы
-            </h3>
-            <BookOpen className="w-5 h-5 text-orange-600" />
-          </div>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {recentGroups.length > 0 ? (
               recentGroups.map((group) => (
                 <div
                   key={group._id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all cursor-pointer border border-slate-200/50"
                 >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-10 h-10 rounded-lg ${
-                        group.status === "active"
-                          ? "bg-gradient-to-br from-indigo-500 to-purple-500"
-                          : "bg-slate-300"
-                      } flex items-center justify-center shadow`}
-                    >
-                      <Users className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">
-                        {group.name}
-                      </p>
-                      <p className="text-xs text-slate-600">{group.subject}</p>
+                  {/* Status Badge */}
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-full">
+                      <TrendingUp className="w-3 h-3" />
+                      {group.performance}%
+                    </span>
+                    <Clock className="w-4 h-4 text-slate-400" />
+                  </div>
+
+                  {/* Group Avatar/Icon */}
+                  <div className="mb-4">
+                    <div className="w-full h-32 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center relative overflow-hidden">
+                      <div className="absolute inset-0 bg-slate-300 opacity-20" />
+                      <Users className="w-12 h-12 text-slate-400 relative z-10" strokeWidth={1.5} />
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-slate-900">
-                      {group.students}
+
+                  {/* Group Info */}
+                  <div className="mb-4">
+                    <h3 className="text-base font-bold text-slate-800 mb-1.5">
+                      {group.name}
+                    </h3>
+                    <p className="text-sm text-slate-500 line-clamp-1">
+                      {group.subject}
                     </p>
-                    <p className="text-xs text-slate-500">студентов</p>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="pt-4 border-t border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="flex -space-x-2">
+                          {[1, 2].map((i) => (
+                            <div
+                              key={i}
+                              className="w-7 h-7 rounded-full bg-slate-300 border-2 border-white flex items-center justify-center"
+                            >
+                              <span className="text-xs text-slate-600">👤</span>
+                            </div>
+                          ))}
+                        </div>
+                        <span className="text-xs text-slate-500 ml-1">
+                          ({group.students})
+                        </span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors">
+                          <MessageCircle className="w-3.5 h-3.5 text-slate-500" />
+                        </button>
+                        <button className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors">
+                          <UserCheck className="w-3.5 h-3.5 text-slate-500" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-slate-500 text-center py-4">
-                Нет доступных групп
-              </p>
+              <div className="col-span-full text-center py-12">
+                <p className="text-slate-400">Нет доступных групп</p>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Upcoming Exams */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-slate-900">
-              Предстоящие экзамены
-            </h3>
-            <Clock className="w-5 h-5 text-emerald-600" />
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Performance Chart */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-base font-semibold text-slate-800 mb-1">
+                  Успеваемость по группам
+                </h3>
+                <p className="text-xs text-slate-500">Средний балл топ-5 групп</p>
+              </div>
+              <Award className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
+            </div>
+            <div className="h-64">
+              <Bar data={performanceData} options={chartOptions} />
+            </div>
           </div>
-          <div className="space-y-4">
-            {upcomingExams.length > 0 ? (
-              upcomingExams.map((exam) => (
+
+          {/* Student Distribution */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-base font-semibold text-slate-800 mb-1">
+                  Распределение студентов
+                </h3>
+                <p className="text-xs text-slate-500">По группам (топ-4)</p>
+              </div>
+              <Users className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
+            </div>
+            <div className="h-64">
+              <Doughnut
+                data={studentDistributionData}
+                options={doughnutOptions}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Activity */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-base font-semibold text-slate-800">
+                Недавняя активность
+              </h3>
+              <BookOpen className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
+            </div>
+            <div className="space-y-3">
+              {recentGroups.slice(0, 3).map((group) => (
                 <div
-                  key={exam._id}
-                  className="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 transition-all cursor-pointer"
+                  key={group._id}
+                  className="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="text-sm font-semibold text-slate-900 line-clamp-1">
-                      {exam.subject}
-                    </h4>
-                    <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full whitespace-nowrap ml-2">
-                      {exam.group}
-                    </span>
+                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                    <Users className="w-5 h-5 text-slate-500" strokeWidth={1.5} />
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-slate-600">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>{exam.date}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>{exam.time}</span>
-                    </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-800 truncate">
+                      {group.name}
+                    </p>
+                    <p className="text-xs text-slate-500">{group.subject}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-sm font-semibold text-slate-700">
+                      {group.students}
+                    </p>
+                    <p className="text-xs text-slate-400">студентов</p>
                   </div>
                 </div>
-              ))
-            ) : (
-              <p className="text-sm text-slate-500 text-center py-4">
-                Нет предстоящих экзаменов
-              </p>
-            )}
+              ))}
+            </div>
+          </div>
+
+          {/* Upcoming Exams */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-base font-semibold text-slate-800">
+                Предстоящие экзамены
+              </h3>
+              <Clock className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
+            </div>
+            <div className="space-y-3">
+              {upcomingExams.length > 0 ? (
+                upcomingExams.map((exam) => (
+                  <div
+                    key={exam._id}
+                    className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="text-sm font-medium text-slate-800 line-clamp-1">
+                        {exam.subject}
+                      </h4>
+                      <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full whitespace-nowrap ml-2">
+                        {exam.group}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span>{exam.date}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{exam.time}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-slate-400 text-center py-8">
+                  Нет предстоящих экзаменов
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

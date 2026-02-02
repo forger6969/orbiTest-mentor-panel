@@ -6,7 +6,6 @@ import Sidebar from "../components/Sidebar";
 import BigLoader from "../components/BigLoader";
 import { Route, Routes } from "react-router-dom";
 import Groups from "./Groups";
-import Students from "./Students";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(false);
@@ -52,11 +51,11 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className=" bg-gray-50 ">
       {/* Splash screen */}
 
       {user ? (
-        <div className="h-screen flex gap-10">
+        <div className=" flex gap-10 ">
           <Sidebar user={user.mentor} />
 
           <Routes>
@@ -74,11 +73,6 @@ const Dashboard = () => {
             <Route
               path="/groups"
               element={<Groups mockGroups={user.groups} />}
-            />
-
-            <Route
-              path="/students"
-              element={<Students students={user.students} />}
             />
           </Routes>
         </div>
