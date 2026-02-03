@@ -377,19 +377,19 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
           {statsCards.map((stat, index) => (
             <div
               key={index}
-              className={`${stat.bgColor} rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow`}
+              className={`text-slate-600 hover:bg-white transition-all   rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-none border-2 border-slate-300`}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p className={`text-sm ${stat.textColor} opacity-90 mb-2`}>
+              <div className="flex items -start justify-between mb-4 h-23 ">
+                <div className="flex flex-col justify-between">
+                  <p className={`text-sm opacity-90 mb-2`}>
                     {stat.title}
                   </p>
-                  <p className={`text-4xl font-bold ${stat.textColor}`}>
+                  <p className={`text-4xl font-bold pt-4 absolute top-59`}>
                     {stat.value}
                   </p>
                 </div>
-                <div className={`${stat.textColor} opacity-70`}>
-                  <stat.icon className="w-8 h-8" strokeWidth={1.5} />
+                <div className={`opacity-70`}>
+                  <stat.icon className="w-8 h-8 " strokeWidth={1.5} />
                 </div>
               </div>
             </div>
@@ -412,64 +412,110 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
               recentGroups.map((group) => (
                 <div
                   key={group._id}
-                  className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all cursor-pointer border border-slate-200/50"
+                  className="
+                     group
+                     rounded-2xl
+                     bg-white
+                     border border-slate-200
+                     p-4
+                     transition-all duration-300
+                     hover:border-slate-300
+                     hover:shadow-lg
+                     cursor-pointer
+                  "
                 >
-                  {/* Status Badge */}
-                  <div className="flex items-center justify-between mb-6">
-                    <span className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-full">
+                  {/* Top */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="
+                        inline-flex items-center gap-1.5
+                        text-xs font-medium
+                        text-slate-600
+                        bg-slate-100
+                        px-3 py-1.5
+                        rounded-full
+                      ">
                       <TrendingUp className="w-3 h-3" />
                       {group.performance}%
                     </span>
+
                     <Clock className="w-4 h-4 text-slate-400" />
                   </div>
 
-                  {/* Group Avatar/Icon */}
+                  {/* Image / Icon */}
                   <div className="mb-4">
-                    <div className="w-full h-32 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-slate-300 opacity-20" />
-                      <Users className="w-12 h-12 text-slate-400 relative z-10" strokeWidth={1.5} />
+                    <div className="
+                           h-28 w-full
+                           rounded-xl
+                           bg-slate-100
+                           flex items-center justify-center
+                         ">
+                      <Users
+                        className="
+                            w-11 h-11
+                            text-slate-400
+                            group-hover:text-slate-500
+                            transition-colors
+                          "
+                        strokeWidth={1.5}
+                      />
                     </div>
                   </div>
 
-                  {/* Group Info */}
-                  <div className="mb-4">
-                    <h3 className="text-base font-bold text-slate-800 mb-1.5">
+                  {/* Content */}
+                  <div className="mb-5">
+                    <h3 className="text-sm font-semibold text-slate-800">
                       {group.name}
                     </h3>
-                    <p className="text-sm text-slate-500 line-clamp-1">
+                    <p className="text-sm text-slate-500 truncate">
                       {group.subject}
                     </p>
                   </div>
 
                   {/* Footer */}
-                  <div className="pt-4 border-t border-slate-100">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="flex -space-x-2">
-                          {[1, 2].map((i) => (
-                            <div
-                              key={i}
-                              className="w-7 h-7 rounded-full bg-slate-300 border-2 border-white flex items-center justify-center"
-                            >
-                              <span className="text-xs text-slate-600">👤</span>
-                            </div>
-                          ))}
-                        </div>
-                        <span className="text-xs text-slate-500 ml-1">
-                          ({group.students})
-                        </span>
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <div className="flex -space-x-2">
+                        {[1, 2].map((i) => (
+                          <div
+                            key={i}
+                            className="
+                                 w-7 h-7
+                                rounded-full
+                                bg-slate-200
+                                border-2 border-white
+                              "
+                          />
+                        ))}
                       </div>
-                      <div className="flex gap-2">
-                        <button className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors">
-                          <MessageCircle className="w-3.5 h-3.5 text-slate-500" />
-                        </button>
-                        <button className="w-7 h-7 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors">
-                          <UserCheck className="w-3.5 h-3.5 text-slate-500" />
-                        </button>
-                      </div>
+                      <span className="text-xs text-slate-500">
+                        {group.students} students
+                      </span>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button className="
+                              w-8 h-8
+                              rounded-lg
+                              border border-slate-200
+                              hover:bg-slate-100
+                              transition
+                            ">
+                        <MessageCircle className="w-4 h-4 text-slate-500 mx-auto" />
+                      </button>
+
+                      <button className="
+                             w-8 h-8
+                             rounded-lg
+                             border border-slate-200
+                             hover:bg-slate-100
+                             transition
+                           ">
+                        <UserCheck className="w-4 h-4 text-slate-500 mx-auto" />
+                      </button>
                     </div>
                   </div>
                 </div>
+
               ))
             ) : (
               <div className="col-span-full text-center py-12">
