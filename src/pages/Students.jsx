@@ -1,5 +1,15 @@
 import React, { useMemo, useState } from "react";
-import { Users, Search, User, Mail, Layers, TrendingUp } from "lucide-react";
+import {
+  Users,
+  Search,
+  User,
+  Mail,
+  Layers,
+  TrendingUp,
+  Circle,
+  FileText,
+  Clock,
+} from "lucide-react";
 
 const gradeColors = {
   junior: "bg-slate-200 text-slate-700",
@@ -17,19 +27,54 @@ const gradeLabels = {
   senior: "Senior",
 };
 
-const Students = ({ students = [] }) => {
+const Students = ({
+  students = [],
+  onlineStudents = [],
+  studentsInTest = [],
+}) => {
   const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all"); // all, online, inTest
+
+  // Проверка онлайн статуса
+  const isOnline = (studentId) => {
+    return onlineStudents.some((s) => s._id === studentId || s === studentId);
+  };
+
+  // Проверка решает ли студент тест
+  const isInTest = (studentId) => {
+    return studentsInTest.some((s) => s.studentId === studentId);
+  };
+
+  // Получить информацию о тесте
+  const getTestInfo = (studentId) => {
+    return studentsInTest.find((s) => s.studentId === studentId);
+  };
 
   const filteredStudents = useMemo(() => {
     const q = search.toLowerCase().trim();
-    if (!q) return students;
+    let result = students;
 
-    return students.filter((s) =>
-      [s.firstName, s.lastName, s.username, s.email].some((field) =>
-        field?.toLowerCase().includes(q)
-      )
-    );
-  }, [students, search]);
+    // Фильтр по тексту
+    if (q) {
+      result = result.filter((s) =>
+        [s.firstName, s.lastName, s.username, s.email].some((field) =>
+          field?.toLowerCase().includes(q)
+        )
+      );
+    }
+
+    // Фильтр по статусу
+    if (filterStatus === "online") {
+      result = result.filter((s) => isOnline(s._id));
+    } else if (filterStatus === "inTest") {
+      result = result.filter((s) => isInTest(s._id));
+    }
+
+    return result;
+  }, [students, search, filterStatus, onlineStudents, studentsInTest]);
+
+  const onlineCount = students.filter((s) => isOnline(s._id)).length;
+  const inTestCount = studentsInTest.length;
 
   return (
     <div className="ml-64 min-h-screen bg-slate-50 w-full">
@@ -55,12 +100,36 @@ const Students = ({ students = [] }) => {
             />
           </div>
         </div>
+
+        {/* Filter Tabs */}
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={() => setFilterStatus("all")}
+            className={`btn btn-sm ${filterStatus === "all" ? "btn-primary" : "btn-ghost"}`}
+          >
+            Все ({students.length})
+          </button>
+          <button
+            onClick={() => setFilterStatus("online")}
+            className={`btn btn-sm ${filterStatus === "online" ? "btn-success" : "btn-ghost"} gap-2`}
+          >
+            <Circle className="w-3 h-3 fill-green-500 text-green-500" />
+            Онлайн ({onlineCount})
+          </button>
+          <button
+            onClick={() => setFilterStatus("inTest")}
+            className={`btn btn-sm ${filterStatus === "inTest" ? "btn-warning" : "btn-ghost"} gap-2`}
+          >
+            <FileText className="w-3 h-3" />
+            Решают тест ({inTestCount})
+          </button>
+        </div>
       </div>
 
       {/* Content */}
       <div className="px-6 pb-10">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <div className="stats shadow-lg border border-slate-200 bg-slate-700 text-white">
             <div className="stat">
               <div className="stat-figure">
@@ -71,15 +140,23 @@ const Students = ({ students = [] }) => {
             </div>
           </div>
 
-          <div className="stats shadow-lg border border-slate-200 bg-slate-600 text-white">
+          <div className="stats shadow-lg border border-slate-200 bg-green-600 text-white">
             <div className="stat">
               <div className="stat-figure">
-                <Layers className="w-8 h-8" />
+                <Circle className="w-8 h-8 fill-white" />
               </div>
-              <div className="stat-title text-slate-300">С группой</div>
-              <div className="stat-value">
-                {students.filter((s) => s.groupID).length}
+              <div className="stat-title text-green-100">Онлайн</div>
+              <div className="stat-value">{onlineCount}</div>
+            </div>
+          </div>
+
+          <div className="stats shadow-lg border border-slate-200 bg-orange-500 text-white">
+            <div className="stat">
+              <div className="stat-figure">
+                <FileText className="w-8 h-8" />
               </div>
+              <div className="stat-title text-orange-100">Решают тест</div>
+              <div className="stat-value">{inTestCount}</div>
             </div>
           </div>
 
@@ -123,6 +200,9 @@ const Students = ({ students = [] }) => {
                     Email
                   </th>
                   <th className="text-xs font-bold text-slate-600 uppercase">
+                    Статус
+                  </th>
+                  <th className="text-xs font-bold text-slate-600 uppercase">
                     Уровень
                   </th>
                   <th className="text-xs font-bold text-slate-600 uppercase">
@@ -134,60 +214,93 @@ const Students = ({ students = [] }) => {
                 </tr>
               </thead>
               <tbody>
-                {filteredStudents.map((student) => (
-                  <tr key={student._id} className="hover">
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="w-10 h-10 rounded-lg ring-2 ring-slate-200">
-                            <img src={student.avatar} alt="" />
+                {filteredStudents.map((student) => {
+                  const online = isOnline(student._id);
+                  const inTest = isInTest(student._id);
+                  const testInfo = getTestInfo(student._id);
+
+                  return (
+                    <tr key={student._id} className="hover">
+                      <td>
+                        <div className="flex items-center gap-3">
+                          <div className="avatar">
+                            <div className="relative w-10 h-10 rounded-lg ring-2 ring-slate-200">
+                              <img src={student.avatar} alt="" />
+                              {online && (
+                                <Circle className="absolute -bottom-1 -right-1 w-4 h-4 fill-green-500 text-green-500 border-2 border-white rounded-full" />
+                              )}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="font-bold text-slate-900">
+                              {student.firstName} {student.lastName}
+                            </div>
+                            <div className="text-xs text-slate-500">
+                              @{student.username}
+                            </div>
                           </div>
                         </div>
-                        <div>
-                          <div className="font-bold text-slate-900">
-                            {student.firstName} {student.lastName}
-                          </div>
-                          <div className="text-xs text-slate-500">
-                            @{student.username}
-                          </div>
+                      </td>
+
+                      <td>
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                          <Mail className="w-4 h-4 text-slate-400" />
+                          {student.email}
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    <td>
-                      <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <Mail className="w-4 h-4 text-slate-400" />
-                        {student.email}
-                      </div>
-                    </td>
+                      <td>
+                        <div className="flex flex-col gap-1">
+                          {online && (
+                            <span className="badge badge-success badge-sm gap-1">
+                              <Circle className="w-2 h-2 fill-white" />
+                              Онлайн
+                            </span>
+                          )}
+                          {inTest && testInfo && (
+                            <div className="badge badge-warning badge-sm gap-1">
+                              <FileText className="w-3 h-3" />
+                              <span className="text-xs">
+                                {testInfo.testTitle || "Решает тест"}
+                              </span>
+                            </div>
+                          )}
+                          {!online && !inTest && (
+                            <span className="badge badge-ghost badge-sm text-slate-400">
+                              Офлайн
+                            </span>
+                          )}
+                        </div>
+                      </td>
 
-                    <td>
-                      <span
-                        className={`badge badge-sm ${gradeColors[student.grade]}`}
-                      >
-                        {gradeLabels[student.grade]}
-                      </span>
-                    </td>
-
-                    <td>
-                      <span className="text-sm font-semibold text-slate-700">
-                        {student.gradeExperience} мес.
-                      </span>
-                    </td>
-
-                    <td>
-                      {student.groupID ? (
-                        <span className="badge badge-outline badge-sm">
-                          В группе
+                      <td>
+                        <span
+                          className={`badge badge-sm ${gradeColors[student.grade]}`}
+                        >
+                          {gradeLabels[student.grade]}
                         </span>
-                      ) : (
-                        <span className="badge badge-ghost badge-sm text-slate-400">
-                          Без группы
+                      </td>
+
+                      <td>
+                        <span className="text-sm font-semibold text-slate-700">
+                          {student.gradeExperience} мес.
                         </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+
+                      <td>
+                        {student.groupID ? (
+                          <span className="badge badge-outline badge-sm">
+                            В группе
+                          </span>
+                        ) : (
+                          <span className="badge badge-ghost badge-sm text-slate-400">
+                            Без группы
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 
