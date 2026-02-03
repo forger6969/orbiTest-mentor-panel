@@ -9,11 +9,12 @@ import Groups from "./Groups";
 import Students from "./Students";
 import Header from "../components/Header";
 import { useSocket } from "../hooks/useSocket";
+import CreateGroup from "./CreateGroup";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(false);
   const [user, setUser] = useState(null);
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
 
   // Socket.IO для уведомлений
   const { notifications, onlineStudents, studentsInTest, markAsViewed } =
@@ -21,6 +22,7 @@ const Dashboard = () => {
 
   const getUser = async () => {
     try {
+      setLoader(true);
       const token = localStorage.getItem("token");
       const req = await axios.get(
         import.meta.env.VITE_BACKEND_API + "/api/mentor/dashboard",
@@ -62,6 +64,7 @@ const Dashboard = () => {
             user={user.mentor}
             notifications={notifications}
             onMarkAsViewed={markAsViewed}
+            reload={getUser}
           />
           <Routes>
             <Route
@@ -89,6 +92,8 @@ const Dashboard = () => {
                 />
               }
             />
+
+            <Route path="/groups/create" element={<CreateGroup />} />
           </Routes>
         </div>
       ) : (

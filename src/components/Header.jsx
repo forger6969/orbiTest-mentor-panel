@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   Info,
   X,
+  RotateCcw,
 } from "lucide-react";
 
 const Header = ({
@@ -22,6 +23,7 @@ const Header = ({
   onMarkAsViewed,
   onMarkAllAsViewed,
   onDeleteNotification,
+  reload,
 }) => {
   const [openNotif, setOpenNotif] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
@@ -148,6 +150,9 @@ const Header = ({
 
       {/* RIGHT */}
       <div className="flex items-center gap-5">
+        <button onClick={reload}>
+          <RotateCcw />
+        </button>
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
           <button
