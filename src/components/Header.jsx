@@ -16,6 +16,7 @@ import {
   X,
   RotateCcw,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({
   user,
@@ -28,6 +29,7 @@ const Header = ({
   const [openNotif, setOpenNotif] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const [filter, setFilter] = useState("all");
+  const navigate = useNavigate();
 
   const notifRef = useRef(null);
   const profileRef = useRef(null);
@@ -126,6 +128,11 @@ const Header = ({
       day: "numeric",
       month: "short",
     });
+  };
+
+  const handleLogOut = () => {
+    localStorage.clear();
+    navigate("/");
   };
 
   const filteredNotifications = notifications.filter((n) => {
@@ -397,7 +404,10 @@ const Header = ({
               </div>
 
               <div className="border-t py-1">
-                <button className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-red-50 text-sm text-red-600 transition">
+                <button
+                  className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-red-50 text-sm text-red-600 transition"
+                  onClick={handleLogOut}
+                >
                   <LogOut className="w-4 h-4" />
                   <span>Выйти</span>
                 </button>

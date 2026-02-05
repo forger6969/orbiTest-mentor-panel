@@ -4,17 +4,19 @@ import axios from "axios";
 import Home from "./Home";
 import Sidebar from "../components/Sidebar";
 import BigLoader from "../components/BigLoader";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Groups from "./Groups";
 import Students from "./Students";
 import Header from "../components/Header";
 import { useSocket } from "../hooks/useSocket";
 import CreateGroup from "./CreateGroup";
+import { AnimatePresence } from "framer-motion";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(false);
   const [user, setUser] = useState(null);
   const [loader, setLoader] = useState(false);
+  const location = useLocation();
 
   // Socket.IO для уведомлений
   const { notifications, onlineStudents, studentsInTest, markAsViewed } =
@@ -51,6 +53,30 @@ const Dashboard = () => {
     sessionStorage.setItem("welcomeShown", "true");
   };
 
+  const addStudentToGroup = async (studentId, groupId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const req = await axios.post(
+        import.meta.env.VITE_BACKEND_API + "/api/group/add",
+        {
+          studentId,
+          groupId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const res = await req.data;
+
+      console.log(res);
+    } catch (err) {
+      console.log(err.response);
+    }
+  };
+
   useEffect(() => {
     getUser();
   }, []);
@@ -66,35 +92,40 @@ const Dashboard = () => {
             onMarkAsViewed={markAsViewed}
             reload={getUser}
           />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Home
-                  exams={user.exams}
-                  students={user.students}
-                  groups={user.groups}
-                  onlineStudents={onlineStudents}
-                />
-              }
-            />
-            <Route
-              path="/groups"
-              element={<Groups mockGroups={user.groups} />}
-            />
-            <Route
-              path="/students"
-              element={
-                <Students
-                  students={user.students}
-                  onlineStudents={onlineStudents}
-                  studentsInTest={studentsInTest}
-                />
-              }
-            />
 
-            <Route path="/groups/create" element={<CreateGroup />} />
-          </Routes>
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    exams={user.exams}
+                    students={user.students}
+                    groups={user.groups}
+                    onlineStudents={onlineStudents}
+                  />
+                }
+              />
+              <Route
+                path="/groups"
+                element={<Groups mockGroups={user.groups} reload={getUser} />}
+              />
+              <Route
+                path="/students"
+                element={
+                  <Students
+                    students={user.students}
+                    onlineStudents={onlineStudents}
+                    studentsInTest={studentsInTest}
+                    groups={user.groups}
+                    onUpdateStudentGroup={addStudentToGroup}
+                  />
+                }
+              />
+
+              <Route path="/groups/create" element={<CreateGroup />} />
+            </Routes>
+          </AnimatePresence>
         </div>
       ) : (
         <BigLoader />
