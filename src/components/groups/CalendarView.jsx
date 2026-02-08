@@ -1,0 +1,248 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { Clock, Users, MoreVertical, Edit2, Copy, Eye } from "lucide-react";
+import ContextMenu from "../ContextMenu";
+
+const pageAnimation = {
+  initial: { opacity: 0, x: -50 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 50 },
+};
+
+const CalendarView = ({
+  mockGroups,
+  isLoading,
+  handleViewGroup,
+  handleEditGroup,
+  handleDuplicateGroup,
+  handleArchiveGroup,
+  handleDeleteGroup,
+}) => {
+  const timeSlots = [
+    "10:00",
+    "12:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+    "19:30",
+    "20:00",
+  ];
+  const days = [
+    { label: "Понедельник", value: "odd", short: "Пн" },
+    { label: "Вторник", value: "even", short: "Вт" },
+    { label: "Среда", value: "odd", short: "Ср" },
+    { label: "Четверг", value: "even", short: "Чт" },
+    { label: "Пятница", value: "odd", short: "Пт" },
+    { label: "Суббота", value: "even", short: "Сб" },
+  ];
+
+  const getPerformanceColor = (performance) => {
+    if (performance >= 90) return "text-slate-700";
+    if (performance >= 75) return "text-slate-600";
+    if (performance >= 60) return "text-slate-500";
+    return "text-slate-400";
+  };
+
+  const getGroupsForSlot = (time, dayType) => {
+    return mockGroups.filter(
+      (g) => g.groupTime === time && g.groupDay === dayType,
+    );
+  };
+
+  const CalendarCardSkeleton = () => {
+    return (
+      <div className="mb-2 p-3 rounded-lg bg-white border border-slate-200">
+        <div className="flex items-start gap-2 mb-2">
+          <div className="w-10 h-10 bg-slate-200 rounded-lg animate-pulse"></div>
+          <div className="flex-1">
+            <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mb-2"></div>
+            <div className="h-3 w-16 bg-slate-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+        <div className="h-2 w-full bg-slate-200 rounded animate-pulse mb-2"></div>
+        <div className="h-3 w-full bg-slate-200 rounded animate-pulse"></div>
+      </div>
+    );
+  };
+
+  return (
+    <div
+      className="w-full"
+      variants={pageAnimation}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.2 }}
+    >
+      <div className="card bg-base-100 shadow-lg border border-slate-200">
+        <div className="overflow-x-auto">
+          <div className="inline-block min-w-full align-middle">
+            <div className="grid grid-cols-7 bg-slate-50">
+              <div className="border-r border-b border-slate-200 p-3 bg-white">
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  Время
+                </div>
+              </div>
+              {days.map((day, idx) => (
+                <div
+                  key={idx}
+                  className="border-r last:border-r-0 border-b border-slate-200 p-3 bg-white"
+                >
+                  <div className="text-sm font-bold text-slate-900">
+                    {day.label}
+                  </div>
+                  <div className="text-xs text-slate-500 mt-0.5">
+                    {day.value === "even" ? "Четные" : "Нечетные"}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {timeSlots.map((time, timeIdx) => (
+              <div
+                key={time}
+                className="grid grid-cols-7 hover:bg-slate-50 transition-colors duration-200"
+              >
+                <div className="border-r border-b border-slate-200 p-3 bg-slate-50">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-slate-500" />
+                    <span className="text-sm font-semibold text-slate-700">
+                      {time}
+                    </span>
+                  </div>
+                </div>
+                {days.map((day, dayIdx) => {
+                  const groups = getGroupsForSlot(time, day.value);
+                  return (
+                    <div
+                      key={dayIdx}
+                      className="border-r last:border-r-0 border-b border-slate-200 p-2 min-h-[140px]"
+                    >
+                      {isLoading
+                        ? dayIdx % 2 === 0 && <CalendarCardSkeleton />
+                        : groups.map((group) => (
+                            <ContextMenu
+                              key={group._id}
+                              group={group}
+                              onView={handleViewGroup}
+                              onEdit={handleEditGroup}
+                              onDuplicate={handleDuplicateGroup}
+                              onArchive={handleArchiveGroup}
+                              onDelete={handleDeleteGroup}
+                            >
+                              <div className="mb-2 last:mb-0 p-3 rounded-lg bg-white border border-slate-200 hover:shadow-md hover:border-slate-400 transition-all duration-300 cursor-pointer group">
+                                <div className="flex items-start gap-2 mb-2">
+                                  <img
+                                    src={group.avatar}
+                                    alt={group.groupName}
+                                    className="w-10 h-10 rounded-lg object-cover ring-2 ring-slate-200 shadow-sm"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-bold text-slate-900 truncate">
+                                      {group.groupName}
+                                    </h4>
+                                    <div className="flex items-center gap-1.5 mt-1">
+                                      <Users className="w-3 h-3 text-slate-500" />
+                                      <span className="text-xs text-slate-600">
+                                        {group.students?.length || 0} студ.
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="dropdown dropdown-end"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <label
+                                      tabIndex={0}
+                                      className="btn btn-ghost btn-xs btn-circle opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                      <MoreVertical className="w-4 h-4 text-slate-400" />
+                                    </label>
+                                    <ul
+                                      tabIndex={0}
+                                      className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-lg w-52 border border-slate-200"
+                                    >
+                                      <li>
+                                        <a
+                                          className="text-sm"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            handleViewGroup(group);
+                                          }}
+                                        >
+                                          <Eye className="w-4 h-4" />
+                                          Просмотр
+                                        </a>
+                                      </li>
+                                      <li>
+                                        <a
+                                          className="text-sm"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            handleEditGroup(group);
+                                          }}
+                                        >
+                                          <Edit2 className="w-4 h-4" />
+                                          Редактировать
+                                        </a>
+                                      </li>
+                                      <li>
+                                        <a
+                                          className="text-sm"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            handleDuplicateGroup(group);
+                                          }}
+                                        >
+                                          <Copy className="w-4 h-4" />
+                                          Дублировать
+                                        </a>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-slate-500">
+                                      Успеваемость
+                                    </span>
+                                    <span
+                                      className={`text-xs font-bold ${getPerformanceColor(group.groupPerformance)}`}
+                                    >
+                                      {group.groupPerformance}%
+                                    </span>
+                                  </div>
+                                  <progress
+                                    className="progress progress-primary w-full h-1.5"
+                                    value={group.groupPerformance}
+                                    max="100"
+                                    style={{
+                                      "--progress-color": "#64748b",
+                                    }}
+                                  ></progress>
+                                </div>
+
+                                <div className="mt-2 pt-2 border-t border-slate-100">
+                                  <div className="text-xs text-slate-500 truncate">
+                                    {group.groupDescribe}
+                                  </div>
+                                </div>
+                              </div>
+                            </ContextMenu>
+                          ))}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CalendarView;

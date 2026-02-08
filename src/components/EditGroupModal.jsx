@@ -18,7 +18,7 @@ const EditGroupModal = ({ setModalType, group, onSubmit, reload }) => {
       groupTime: group?.groupTime || "",
       groupDay: group?.groupDay || "",
     }),
-    [group]
+    [group],
   );
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const EditGroupModal = ({ setModalType, group, onSubmit, reload }) => {
 
   return (
     <div className="fixed inset-0 z-60 bg-black/60 flex items-center justify-center backdrop-blur-sm">
-      <div className="bg-white w-[440px] relative rounded-2xl p-8 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+      <div className="bg-white w-110 relative rounded-2xl p-8 shadow-2xl animate-[fadeIn_0.2s_ease-out]">
         {isLoading && (
           <div className="bg-black/40 backdrop-blur-xs absolute inset-0 z-10 rounded-2xl flex items-center justify-center w-full h-full">
             <span className="loading loading-ring loading-xl scale-150"></span>

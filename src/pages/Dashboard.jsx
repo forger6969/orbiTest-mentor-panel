@@ -11,6 +11,7 @@ import Header from "../components/Header";
 import { useSocket } from "../hooks/useSocket";
 import CreateGroup from "./CreateGroup";
 import { AnimatePresence } from "framer-motion";
+import GroupDetails from "./GroupDetails";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(false);
@@ -131,6 +132,7 @@ const Dashboard = () => {
                 }
               />
               <Route path="/groups/create" element={<CreateGroup />} />
+              <Route path="/groups/:groupId" element={<GroupDetails />} />
             </Routes>
           </AnimatePresence>
         </div>

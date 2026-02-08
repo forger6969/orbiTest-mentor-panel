@@ -1,3 +1,19 @@
 {
-  "welcome": "Добро пожаловать"
+  "welcome": "Добро пожаловать",
+  "home": {
+    "groupTitle": "Группы",
+    "groupDescribe": "Управление учебными группами и их контроль",
+    "summGroups": "Всего групп",
+    "studentsCount": "Студенты",
+    "averagePerfomance": "Средняя производительность",
+    "telegramCount": "telegram-групп",
+    "activeGroups": "Активниые группы",
+    "seeAll": "Посмотреть все",
+    "studentDistribution": "Распределение студентов",
+    "byGroup": "По группам (топ-4)",
+    "academicPerfomance": "Успеваемость по группам",
+    "averageBall": "Средний балл топ-5 групп",
+    "recentActivity": "Недавняя активность",
+    "upcomingExams": "Предстоящие экзамены"
+  }
 }

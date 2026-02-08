@@ -22,7 +22,12 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { Bar, Doughnut } from "react-chartjs-2";
+import StatsCard from "../components/home/StatsCard";
+import GroupCard from "../components/home/GroupCard";
+import RecentActivity from "../components/home/RecentActivity";
+import UpcomingExams from "../components/home/UpcomingExams";
+import PerformanceChart from "../components/home/PerformanceChart";
+import StudentDistributionChart from "../components/home/StudentDistributionChart";
 
 // Регистрация компонентов Chart.js
 ChartJS.register(
@@ -35,7 +40,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 const Home = ({ groups = [], students = [], exams = [] }) => {
@@ -130,7 +135,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
   const stats = useMemo(() => {
     const totalStudents = actualStudents.length;
     const activeGroups = actualGroups.filter(
-      (g) => g.students && g.students.length > 0
+      (g) => g.students && g.students.length > 0,
     ).length;
 
     // Экзамены сегодня
@@ -145,7 +150,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
     });
 
     const completedToday = todayExams.filter(
-      (e) => e.status === "completed"
+      (e) => e.status === "completed",
     ).length;
 
     return {
@@ -357,16 +362,11 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
   }, [actualExams]);
 
   return (
-    <div className="min-h-screen p-8 mx-auto   w-[70%]">
-      <div className="min-h-screen  p-8 mx-auto w-[120%]
-        ml-10
- ">
-
+    <div className="min-h-screen p-8 mx-auto w-[70%]">
+      <div className="min-h-screen p-8 mx-auto w-[120%] ml-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-800 mb-1">
-            Группы
-          </h1>
+          <h1 className="text-3xl font-bold text-slate-800 mb-1">Группы</h1>
           <p className="text-slate-500 text-sm">
             Управление учебными группами и расписанием
           </p>
@@ -375,24 +375,14 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {statsCards.map((stat, index) => (
-            <div
+            <StatsCard
               key={index}
-              className={`text-slate-600 hover:bg-white transition-all   rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-none border-2 border-slate-300`}
-            >
-              <div className="flex items -start justify-between mb-4 h-23 ">
-                <div className="flex flex-col justify-between">
-                  <p className={`text-sm opacity-90 mb-2`}>
-                    {stat.title}
-                  </p>
-                  <p className={`text-4xl font-bold pt-4 absolute top-59`}>
-                    {stat.value}
-                  </p>
-                </div>
-                <div className={`opacity-70`}>
-                  <stat.icon className="w-8 h-8 " strokeWidth={1.5} />
-                </div>
-              </div>
-            </div>
+              title={stat.title}
+              value={stat.value}
+              Icon={stat.icon}
+              bgColor={stat.bgColor}
+              textColor={stat.textColor}
+            />
           ))}
         </div>
 
@@ -408,239 +398,27 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {recentGroups.length > 0 ? (
-              recentGroups.map((group) => (
-                <div
-                  key={group._id}
-                  className="
-                     group
-                     rounded-2xl
-                     bg-white
-                     border border-slate-200
-                     p-4
-                     transition-all duration-300
-                     hover:border-slate-300
-                     hover:shadow-lg
-                     cursor-pointer
-                  "
-                >
-                  {/* Top */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="
-                        inline-flex items-center gap-1.5
-                        text-xs font-medium
-                        text-slate-600
-                        bg-slate-100
-                        px-3 py-1.5
-                        rounded-full
-                      ">
-                      <TrendingUp className="w-3 h-3" />
-                      {group.performance}%
-                    </span>
-
-                    <Clock className="w-4 h-4 text-slate-400" />
-                  </div>
-
-                  {/* Image / Icon */}
-                  <div className="mb-4">
-                    <div className="
-                           h-28 w-full
-                           rounded-xl
-                           bg-slate-100
-                           flex items-center justify-center
-                         ">
-                      <Users
-                        className="
-                            w-11 h-11
-                            text-slate-400
-                            group-hover:text-slate-500
-                            transition-colors
-                          "
-                        strokeWidth={1.5}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="mb-5">
-                    <h3 className="text-sm font-semibold text-slate-800">
-                      {group.name}
-                    </h3>
-                    <p className="text-sm text-slate-500 truncate">
-                      {group.subject}
-                    </p>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <div className="flex items-center gap-2">
-                      <div className="flex -space-x-2">
-                        {[1, 2].map((i) => (
-                          <div
-                            key={i}
-                            className="
-                                 w-7 h-7
-                                rounded-full
-                                bg-slate-200
-                                border-2 border-white
-                              "
-                          />
-                        ))}
-                      </div>
-                      <span className="text-xs text-slate-500">
-                        {group.students} students
-                      </span>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <button className="
-                              w-8 h-8
-                              rounded-lg
-                              border border-slate-200
-                              hover:bg-slate-100
-                              transition
-                            ">
-                        <MessageCircle className="w-4 h-4 text-slate-500 mx-auto" />
-                      </button>
-
-                      <button className="
-                             w-8 h-8
-                             rounded-lg
-                             border border-slate-200
-                             hover:bg-slate-100
-                             transition
-                           ">
-                        <UserCheck className="w-4 h-4 text-slate-500 mx-auto" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-              ))
-            ) : (
-              <div className="col-span-full text-center py-12">
-                <p className="text-slate-400">Нет доступных групп</p>
-              </div>
-            )}
+            {recentGroups.length > 0
+              ? recentGroups.map((group) => (
+                  <GroupCard key={group._id} group={group} />
+                ))
+              : null}
           </div>
         </div>
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Performance Chart */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-base font-semibold text-slate-800 mb-1">
-                  Успеваемость по группам
-                </h3>
-                <p className="text-xs text-slate-500">Средний балл топ-5 групп</p>
-              </div>
-              <Award className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
-            </div>
-            <div className="h-64">
-              <Bar data={performanceData} options={chartOptions} />
-            </div>
-          </div>
-
-          {/* Student Distribution */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-base font-semibold text-slate-800 mb-1">
-                  Распределение студентов
-                </h3>
-                <p className="text-xs text-slate-500">По группам (топ-4)</p>
-              </div>
-              <Users className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
-            </div>
-            <div className="h-64">
-              <Doughnut
-                data={studentDistributionData}
-                options={doughnutOptions}
-              />
-            </div>
-          </div>
+          <PerformanceChart data={performanceData} options={chartOptions} />
+          <StudentDistributionChart
+            data={studentDistributionData}
+            options={doughnutOptions}
+          />
         </div>
 
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Activity */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-base font-semibold text-slate-800">
-                Недавняя активность
-              </h3>
-              <BookOpen className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
-            </div>
-            <div className="space-y-3">
-              {recentGroups.slice(0, 3).map((group) => (
-                <div
-                  key={group._id}
-                  className="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
-                    <Users className="w-5 h-5 text-slate-500" strokeWidth={1.5} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-800 truncate">
-                      {group.name}
-                    </p>
-                    <p className="text-xs text-slate-500">{group.subject}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-semibold text-slate-700">
-                      {group.students}
-                    </p>
-                    <p className="text-xs text-slate-400">студентов</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Upcoming Exams */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/50">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-base font-semibold text-slate-800">
-                Предстоящие экзамены
-              </h3>
-              <Clock className="w-5 h-5 text-slate-400" strokeWidth={1.5} />
-            </div>
-            <div className="space-y-3">
-              {upcomingExams.length > 0 ? (
-                upcomingExams.map((exam) => (
-                  <div
-                    key={exam._id}
-                    className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50/50 transition-all cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="text-sm font-medium text-slate-800 line-clamp-1">
-                        {exam.subject}
-                      </h4>
-                      <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full whitespace-nowrap ml-2">
-                        {exam.group}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span>{exam.date}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>{exam.time}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-slate-400 text-center py-8">
-                  Нет предстоящих экзаменов
-                </p>
-              )}
-            </div>
-          </div>
+          <RecentActivity recentGroups={recentGroups} />
+          <UpcomingExams upcomingExams={upcomingExams} />
         </div>
       </div>
     </div>
