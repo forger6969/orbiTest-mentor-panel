@@ -4,32 +4,29 @@ import { io } from "socket.io-client";
 // Функция для воспроизведения звука
 const playNotificationSound = () => {
   try {
-    // Вариант 1: Использовать файл из public/sounds/
-    // const audio = new Audio("../../public/notification");
-    // audio.volume = 0.5; // 50% громкости
-    // audio.play().catch((err) => console.log("Could not play sound:", err));
+    const audio = new Audio("/telegram_notification.mp3");
+    audio.volume = 0.5;
+    audio.play().catch((err) => console.log("Could not play sound:", err));
 
-    // Вариант 2: Использовать Web Audio API (встроенный звук)
+    // const audioContext = new (
+    //   window.AudioContext || window.webkitAudioContext
+    // )();
+    // const oscillator = audioContext.createOscillator();
+    // const gainNode = audioContext.createGain();
 
-    const audioContext = new (
-      window.AudioContext || window.webkitAudioContext
-    )();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    // oscillator.connect(gainNode);
+    // gainNode.connect(audioContext.destination);
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    // oscillator.frequency.value = 800;
+    // oscillator.type = "sine";
+    // gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    // gainNode.gain.exponentialRampToValueAtTime(
+    //   0.01,
+    //   audioContext.currentTime + 0.5
+    // );
 
-    oscillator.frequency.value = 800;
-    oscillator.type = "sine";
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(
-      0.01,
-      audioContext.currentTime + 0.5
-    );
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.5);
+    // oscillator.start(audioContext.currentTime);
+    // oscillator.stop(audioContext.currentTime + 0.5);
   } catch (error) {
     console.error("Error playing notification sound:", error);
   }

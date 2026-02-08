@@ -18,7 +18,7 @@ const AuthPage = () => {
     const token = localStorage.getItem("token");
     if (token) {
       setAuth(true);
-      navigate("/Dashboard");
+      navigate("/dashboard");
     }
   }, [navigate]);
 
@@ -33,7 +33,7 @@ const AuthPage = () => {
       const data = req.data;
       localStorage.setItem("token", data.token);
       setAuth(true);
-      navigate("/Dashboard");
+      navigate("/dashboard");
       sessionStorage.clear();
     } catch (err) {
       console.log(err);

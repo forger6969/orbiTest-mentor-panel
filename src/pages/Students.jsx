@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import {
   Users,
   Search,
@@ -14,8 +14,12 @@ import {
   Save,
   Eye,
   UserCog,
+  UserPlus,
+  Lock,
+  ChevronDown,
+  Check,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const gradeColors = {
   junior: "bg-slate-200 text-slate-700",
@@ -39,18 +43,247 @@ const pageAnimation = {
   exit: { opacity: 0, x: 50 },
 };
 
+// Компонент кастомного Select с поиском (открывается вверх)
+const CustomSelect = ({
+  groups,
+  selectedGroup,
+  onSelect,
+  placeholder = "Guruhni tanlang",
+  openUpward = false,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const dropdownRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const filteredGroups = useMemo(() => {
+    if (!searchTerm.trim()) return groups;
+    return groups.filter((group) =>
+      group.groupName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [groups, searchTerm]);
+
+  const selectedGroupData = groups.find((g) => g._id === selectedGroup);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+        setSearchTerm("");
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  const handleSelect = (groupId) => {
+    onSelect(groupId);
+    setIsOpen(false);
+    setSearchTerm("");
+    setHighlightedIndex(0);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!isOpen) {
+      if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+        e.preventDefault();
+        setIsOpen(true);
+      }
+      return;
+    }
+
+    const allOptions = [
+      { _id: "", groupName: "Без группы" },
+      ...filteredGroups,
+    ];
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setHighlightedIndex((prev) =>
+          prev < allOptions.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (allOptions[highlightedIndex]) {
+          handleSelect(allOptions[highlightedIndex]._id);
+        }
+        break;
+      case "Escape":
+        e.preventDefault();
+        setIsOpen(false);
+        setSearchTerm("");
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      {/* Trigger Button/Input */}
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative cursor-pointer"
+      >
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder={
+            selectedGroupData ? selectedGroupData.groupName : placeholder
+          }
+          className="w-full px-4 py-3 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer placeholder:text-slate-400"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            if (!isOpen) setIsOpen(true);
+          }}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsOpen(true)}
+        />
+        <ChevronDown
+          className={`absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-transform pointer-events-none ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </div>
+
+      {/* Dropdown */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: openUpward ? 10 : -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: openUpward ? 10 : -10 }}
+            transition={{ duration: 0.15 }}
+            className={`absolute ${
+              openUpward ? "bottom-full mb-2" : "top-full mt-2"
+            } w-full bg-white border border-slate-200 rounded-lg shadow-xl z-50 overflow-hidden`}
+          >
+            {/* Options List */}
+            <div className="max-h-64 overflow-y-auto">
+              {/* None Option */}
+              <motion.div
+                whileHover={{ backgroundColor: "#f8fafc" }}
+                onClick={() => handleSelect("")}
+                onMouseEnter={() => setHighlightedIndex(0)}
+                className={`px-4 py-3 cursor-pointer transition-colors border-b border-slate-100 ${
+                  highlightedIndex === 0
+                    ? "bg-blue-50"
+                    : !selectedGroup
+                      ? "bg-slate-50"
+                      : ""
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`font-medium ${!selectedGroup ? "text-blue-600" : "text-slate-700"}`}
+                  >
+                    Без группы
+                  </span>
+                  {!selectedGroup && (
+                    <Check className="w-4 h-4 text-blue-600" />
+                  )}
+                </div>
+              </motion.div>
+
+              {/* Group Options */}
+              {filteredGroups.length > 0 ? (
+                filteredGroups.map((group, index) => {
+                  const actualIndex = index + 1;
+                  const isSelected = selectedGroup === group._id;
+                  const isHighlighted = highlightedIndex === actualIndex;
+
+                  return (
+                    <motion.div
+                      key={group._id}
+                      whileHover={{ backgroundColor: "#f8fafc" }}
+                      onClick={() => handleSelect(group._id)}
+                      onMouseEnter={() => setHighlightedIndex(actualIndex)}
+                      className={`px-4 py-3 cursor-pointer transition-colors border-b border-slate-100 last:border-b-0 ${
+                        isHighlighted
+                          ? "bg-blue-50"
+                          : isSelected
+                            ? "bg-slate-50"
+                            : ""
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div
+                            className={`font-medium ${isSelected ? "text-blue-600" : "text-slate-900"}`}
+                          >
+                            {group.groupName}
+                          </div>
+                          {group.students && (
+                            <div className="text-xs text-slate-500 mt-0.5">
+                              {group.students.length} ta talaba
+                            </div>
+                          )}
+                        </div>
+                        {isSelected && (
+                          <Check className="w-4 h-4 text-blue-600" />
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })
+              ) : (
+                <div className="px-4 py-8 text-center text-slate-500">
+                  <Search className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                  <p className="text-sm">Guruh topilmadi</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const Students = ({
   students = [],
   onlineStudents = [],
   studentsInTest = [],
-  groups = [], // Добавляем список групп
-  onUpdateStudentGroup, // Callback для обновления группы студента
-  onViewTests, // Callback для просмотра тестов студента
+  groups = [],
+  onUpdateStudentGroup,
+  onViewTests,
+  onAddStudent,
 }) => {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [editingStudent, setEditingStudent] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  // Состояние для формы добавления студента
+  const [newStudent, setNewStudent] = useState({
+    username: "",
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    groupID: "",
+  });
 
   // Проверка онлайн статуса
   const isOnline = (studentId) => {
@@ -97,18 +330,73 @@ const Students = ({
     setSelectedGroupId(student.groupID?._id || "");
   };
 
-  // Закрыть модальное окно
+  // Закрыть модальное окно редактирования
   const handleCloseModal = () => {
     setEditingStudent(null);
     setSelectedGroupId("");
   };
 
-  // Сохранить изменения
+  // Сохранить изменения группы
   const handleSave = async () => {
     if (onUpdateStudentGroup && editingStudent) {
       await onUpdateStudentGroup(editingStudent._id, selectedGroupId);
       handleCloseModal();
     }
+  };
+
+  // Открыть модальное окно добавления студента
+  const handleOpenAddModal = () => {
+    setShowAddModal(true);
+    setNewStudent({
+      username: "",
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      groupID: "",
+    });
+  };
+
+  // Закрыть модальное окно добавления студента
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
+    setNewStudent({
+      username: "",
+      email: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      groupID: "",
+    });
+  };
+
+  // Обработка изменения полей формы
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewStudent((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Добавить нового студента
+  const handleAddStudent = async () => {
+    try {
+      const req = await axios;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // Проверка валидности формы
+  const isFormValid = () => {
+    return (
+      newStudent.username.trim() !== "" &&
+      newStudent.email.trim() !== "" &&
+      newStudent.password.trim() !== "" &&
+      newStudent.firstName.trim() !== "" &&
+      newStudent.lastName.trim() !== ""
+    );
   };
 
   // Просмотр тестов студента
@@ -138,16 +426,27 @@ const Students = ({
               </p>
             </div>
 
-            {/* Search */}
-            <div className="relative w-full max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Поиск по имени, email, username"
-                className="input input-bordered w-full pl-9 bg-white border-slate-200 focus:border-slate-400"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+            <div className="flex items-center gap-3">
+              {/* Search */}
+              <div className="relative w-full max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Поиск по имени, email, username"
+                  className="input input-bordered w-full pl-9 bg-white border-slate-200 focus:border-slate-400"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+
+              {/* Add Student Button */}
+              <button
+                onClick={handleOpenAddModal}
+                className="btn btn-primary gap-2 shadow-lg whitespace-nowrap"
+              >
+                <UserPlus className="w-4 h-4" />
+                Yangi Guruh
+              </button>
             </div>
           </div>
 
@@ -515,19 +814,189 @@ const Students = ({
                   className="btn btn-ghost gap-2"
                 >
                   <X className="w-4 h-4" />
-                  Отмена
+                  Bekor qilish
                 </button>
                 <button
                   onClick={handleSave}
                   className="btn btn-primary gap-2 shadow-lg"
                 >
                   <Save className="w-4 h-4" />
-                  Сохранить
+                  Saqlash
                 </button>
               </div>
             </div>
           </div>
         )}
+
+        {/* Add Student Modal - Минималистичная белая */}
+        <AnimatePresence>
+          {showAddModal && (
+            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white rounded-xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col"
+              >
+                {/* Modal Header - Минималистичный */}
+                <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">
+                      Yangi Talaba Qo'shish
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-0.5">
+                      Barcha kerakli ma'lumotlarni to'ldiring
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleCloseAddModal}
+                    className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-5 h-5 text-slate-400" />
+                  </button>
+                </div>
+
+                {/* Modal Body */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                  {/* Personal Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">
+                      Shaxsiy Ma'lumotlar
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">
+                          Ism <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="firstName"
+                          placeholder="Ismni kiriting"
+                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          value={newStudent.firstName}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">
+                          Familiya <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="lastName"
+                          placeholder="Familiyani kiriting"
+                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          value={newStudent.lastName}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Account Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">
+                      Akkaunt Ma'lumotlari
+                    </h3>
+
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">
+                          Username <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          name="username"
+                          placeholder="Username kiriting"
+                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          value={newStudent.username}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">
+                          Email <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="email@example.com"
+                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          value={newStudent.email}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">
+                          Parol <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="password"
+                          name="password"
+                          placeholder="Parolni kiriting"
+                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          value={newStudent.password}
+                          onChange={handleInputChange}
+                        />
+                        <p className="text-xs text-slate-500">
+                          Kamida 6 ta belgi
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Group Selection */}
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">
+                      Guruh
+                    </h3>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-slate-700">
+                        Guruhni tanlang
+                      </label>
+                      <CustomSelect
+                        groups={groups}
+                        selectedGroup={newStudent.groupID}
+                        onSelect={(groupId) =>
+                          setNewStudent((prev) => ({
+                            ...prev,
+                            groupID: groupId,
+                          }))
+                        }
+                        placeholder="Guruhni tanlang"
+                        openUpward={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Modal Footer */}
+                <div className="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                  <button
+                    onClick={handleCloseAddModal}
+                    className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                  >
+                    Bekor qilish
+                  </button>
+                  <button
+                    onClick={handleAddStudent}
+                    disabled={!isFormValid()}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Qo'shish
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );

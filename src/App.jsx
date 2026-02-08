@@ -12,7 +12,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<AuthPage />} />
         <Route
-          path="/Dashboard/*"
+          path="/dashboard/*"
           element={
             <PrivateRoute>
               <Dashboard />
