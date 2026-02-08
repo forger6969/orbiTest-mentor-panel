@@ -4,7 +4,7 @@ import axios from "axios";
 import Home from "./Home";
 import Sidebar from "../components/Sidebar";
 import BigLoader from "../components/BigLoader";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Groups from "./Groups";
 import Students from "./Students";
 import Header from "../components/Header";
@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [loader, setLoader] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Socket.IO для уведомлений
   const { notifications, onlineStudents, studentsInTest, markAsViewed } =
@@ -43,6 +44,10 @@ const Dashboard = () => {
       }
     } catch (err) {
       console.log(err);
+      if (err.status === 401) {
+        localStorage.clear();
+        navigate("/");
+      }
     } finally {
       setLoader(false);
     }
@@ -68,9 +73,7 @@ const Dashboard = () => {
           },
         }
       );
-
       const res = await req.data;
-
       console.log(res);
     } catch (err) {
       console.log(err.response);
@@ -92,7 +95,6 @@ const Dashboard = () => {
             onMarkAsViewed={markAsViewed}
             reload={getUser}
           />
-
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               <Route
@@ -108,7 +110,13 @@ const Dashboard = () => {
               />
               <Route
                 path="/groups"
-                element={<Groups mockGroups={user.groups} reload={getUser} />}
+                element={
+                  <Groups
+                    mockGroups={user.groups}
+                    reload={getUser}
+                    isLoading={loader}
+                  />
+                }
               />
               <Route
                 path="/students"
@@ -122,7 +130,6 @@ const Dashboard = () => {
                   />
                 }
               />
-
               <Route path="/groups/create" element={<CreateGroup />} />
             </Routes>
           </AnimatePresence>

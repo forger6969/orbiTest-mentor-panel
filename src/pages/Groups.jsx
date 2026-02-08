@@ -19,7 +19,11 @@ import {
   Plus,
 } from "lucide-react";
 import CreateGroupModal from "../components/CreateGroupModal";
+import ContextMenu from "../components/ContextMenu";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import EditGroupModal from "../components/EditGroupModal";
+import axios from "axios";
 
 const pageAnimation = {
   initial: { opacity: 0, x: -50 },
@@ -27,11 +31,13 @@ const pageAnimation = {
   exit: { opacity: 0, x: 50 },
 };
 
-const Groups = ({ mockGroups, reload }) => {
+const Groups = ({ mockGroups, reload, isLoading }) => {
   const [viewMode, setViewMode] = useState("calendar");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("");
+  const [modalData, setModalData] = useState(null);
 
   const gradeColors = {
     junior: "bg-slate-200 text-slate-700",
@@ -65,8 +71,8 @@ const Groups = ({ mockGroups, reload }) => {
 
   const handleCreateSuccess = (newGroup) => {
     console.log("New group created:", newGroup);
-    // Here you can update your groups list or refetch data
-    // For example: setMockGroups([...mockGroups, newGroup]);
+    toast.success("Группа успешно создана!");
+    if (reload) reload();
   };
 
   // Получаем все уникальные времена из групп динамически + базовые времена
@@ -92,6 +98,221 @@ const Groups = ({ mockGroups, reload }) => {
     });
   };
 
+  // Обработчики контекстного меню
+  const handleViewGroup = (group) => {
+    console.log("Просмотр группы:", group);
+    toast.info(`Просмотр группы: ${group.groupName}`);
+  };
+
+  const handleEditGroup = (group) => {
+    setModalType("edit");
+    setModalData(group);
+  };
+
+  const handleDuplicateGroup = (group) => {
+    console.log("Дублирование группы:", group);
+    toast.success(`Группа "${group.groupName}" дублирована`);
+  };
+
+  const handleArchiveGroup = (group) => {
+    console.log("Архивирование группы:", group);
+    toast.success(`Группа "${group.groupName}" архивирована`);
+  };
+
+  const handleDeleteGroup = (group) => {
+    console.log("Удаление группы:", group);
+    if (
+      window.confirm(
+        `Вы уверены, что хотите удалить группу "${group.groupName}"?`
+      )
+    ) {
+      toast.success(`Группа "${group.groupName}" удалена`);
+      // API.delete(`/groups/${group._id}`).then(() => reload());
+    }
+  };
+
+  const updateGroup = async (groupData, setLoading, id) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      const req = await axios.patch(
+        import.meta.env.VITE_BACKEND_API + `/api/group/update/${id}`,
+        groupData,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await req.data;
+
+      console.log(data);
+    } catch (err) {
+      toast.error(err.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Skeleton Components
+  const CalendarCardSkeleton = () => {
+    return (
+      <div className="mb-2 p-3 rounded-lg bg-white border border-slate-200">
+        <div className="flex items-start gap-2 mb-2">
+          <div className="w-10 h-10 bg-slate-200 rounded-lg animate-pulse"></div>
+          <div className="flex-1">
+            <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mb-2"></div>
+            <div className="h-3 w-16 bg-slate-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+        <div className="h-2 w-full bg-slate-200 rounded animate-pulse mb-2"></div>
+        <div className="h-3 w-full bg-slate-200 rounded animate-pulse"></div>
+      </div>
+    );
+  };
+
+  const TableSkeleton = () => {
+    return (
+      <div className="card bg-base-100 shadow-lg border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="table table-zebra">
+            <thead className="bg-slate-50">
+              <tr>
+                <th>
+                  <div className="h-3 w-16 bg-slate-300 rounded animate-pulse"></div>
+                </th>
+                <th>
+                  <div className="h-3 w-20 bg-slate-300 rounded animate-pulse"></div>
+                </th>
+                <th>
+                  <div className="h-3 w-24 bg-slate-300 rounded animate-pulse"></div>
+                </th>
+                <th>
+                  <div className="h-3 w-32 bg-slate-300 rounded animate-pulse"></div>
+                </th>
+                <th>
+                  <div className="h-3 w-20 bg-slate-300 rounded animate-pulse"></div>
+                </th>
+                <th>
+                  <div className="h-3 w-16 bg-slate-300 rounded animate-pulse"></div>
+                </th>
+                <th>
+                  <div className="h-3 w-20 bg-slate-300 rounded animate-pulse"></div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: 6 }, (_, i) => (
+                <tr key={i}>
+                  <td>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 bg-slate-200 rounded-lg animate-pulse"></div>
+                      <div>
+                        <div className="h-4 w-32 bg-slate-200 rounded animate-pulse mb-2"></div>
+                        <div className="h-3 w-24 bg-slate-200 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="flex items-center gap-2">
+                      <div className="flex -space-x-2">
+                        {Array.from({ length: 3 }, (_, j) => (
+                          <div
+                            key={j}
+                            className="w-7 h-7 bg-slate-200 rounded-full animate-pulse"
+                          ></div>
+                        ))}
+                      </div>
+                      <div className="h-4 w-6 bg-slate-200 rounded animate-pulse"></div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="h-4 w-20 bg-slate-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-3 w-24 bg-slate-200 rounded animate-pulse"></div>
+                  </td>
+                  <td>
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-2 w-24 bg-slate-200 rounded animate-pulse"></div>
+                      <div className="h-4 w-10 bg-slate-200 rounded animate-pulse"></div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="h-4 w-20 bg-slate-200 rounded animate-pulse"></div>
+                  </td>
+                  <td>
+                    <div className="h-4 w-24 bg-slate-200 rounded animate-pulse"></div>
+                  </td>
+                  <td>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: 4 }, (_, j) => (
+                        <div
+                          key={j}
+                          className="w-8 h-8 bg-slate-200 rounded-full animate-pulse"
+                        ></div>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
+  const CardsSkeleton = () => {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {Array.from({ length: 6 }, (_, i) => (
+          <div
+            key={i}
+            className="card bg-base-100 shadow-lg border border-slate-200"
+          >
+            <figure className="relative h-32 bg-slate-200 animate-pulse"></figure>
+            <div className="card-body p-4">
+              <div className="h-5 w-3/4 bg-slate-200 rounded animate-pulse mb-2"></div>
+              <div className="h-4 w-full bg-slate-200 rounded animate-pulse mb-1"></div>
+              <div className="h-4 w-5/6 bg-slate-200 rounded animate-pulse mb-4"></div>
+
+              <div className="h-10 w-full bg-slate-200 rounded-lg animate-pulse mb-4"></div>
+
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="h-3 w-16 bg-slate-200 rounded animate-pulse"></div>
+                  <div className="h-3 w-12 bg-slate-200 rounded animate-pulse"></div>
+                </div>
+                <div className="flex -space-x-3">
+                  {Array.from({ length: 5 }, (_, j) => (
+                    <div
+                      key={j}
+                      className="w-8 h-8 bg-slate-200 rounded-full animate-pulse"
+                    ></div>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                  {Array.from({ length: 3 }, (_, j) => (
+                    <div
+                      key={j}
+                      className="h-5 w-20 bg-slate-200 rounded animate-pulse"
+                    ></div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-3 border-t border-slate-100 mt-4">
+                <div className="h-3 w-20 bg-slate-200 rounded animate-pulse"></div>
+                <div className="h-3 w-24 bg-slate-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   // Weekly Calendar View
   const CalendarView = () => {
     const timeSlots = getAllTimes();
@@ -111,158 +332,186 @@ const Groups = ({ mockGroups, reload }) => {
     };
 
     return (
-      <>
-        <motion.div
-          className="w-full"
-          variants={pageAnimation}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          transition={{ duration: 0.2 }}
-        >
-          <div className="card bg-base-100 shadow-lg border border-slate-200">
-            <div className="overflow-x-auto">
-              <div className="inline-block min-w-full align-middle">
-                <div className="grid grid-cols-7 bg-slate-50">
-                  <div className="border-r border-b border-slate-200 p-3 bg-white">
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      Время
-                    </div>
+      <div
+        className="w-full"
+        variants={pageAnimation}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        transition={{ duration: 0.2 }}
+      >
+        <div className="card bg-base-100 shadow-lg border border-slate-200">
+          <div className="overflow-x-auto">
+            <div className="inline-block min-w-full align-middle">
+              <div className="grid grid-cols-7 bg-slate-50">
+                <div className="border-r border-b border-slate-200 p-3 bg-white">
+                  <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    Время
                   </div>
-                  {days.map((day, idx) => (
-                    <div
-                      key={idx}
-                      className="border-r last:border-r-0 border-b border-slate-200 p-3 bg-white"
-                    >
-                      <div className="text-sm font-bold text-slate-900">
-                        {day.label}
-                      </div>
-                      <div className="text-xs text-slate-500 mt-0.5">
-                        {day.value === "even" ? "Четные" : "Нечетные"}
-                      </div>
-                    </div>
-                  ))}
                 </div>
-                {timeSlots.map((time, timeIdx) => (
+                {days.map((day, idx) => (
                   <div
-                    key={time}
-                    className="grid grid-cols-7 hover:bg-slate-50 transition-colors duration-200"
+                    key={idx}
+                    className="border-r last:border-r-0 border-b border-slate-200 p-3 bg-white"
                   >
-                    <div className="border-r border-b border-slate-200 p-3 bg-slate-50">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm font-semibold text-slate-700">
-                          {time}
-                        </span>
-                      </div>
+                    <div className="text-sm font-bold text-slate-900">
+                      {day.label}
                     </div>
-                    {days.map((day, dayIdx) => {
-                      const groups = getGroupsForSlot(time, day.value);
-                      return (
-                        <div
-                          key={dayIdx}
-                          className="border-r last:border-r-0 border-b border-slate-200 p-2 min-h-[140px]"
-                        >
-                          {groups.map((group) => (
-                            <div
-                              key={group._id}
-                              className="mb-2 last:mb-0 p-3 rounded-lg bg-white border border-slate-200 hover:shadow-md hover:border-slate-400 transition-all duration-300 cursor-pointer group"
-                            >
-                              <div className="flex items-start gap-2 mb-2">
-                                <img
-                                  src={group.avatar}
-                                  alt={group.groupName}
-                                  className="w-10 h-10 rounded-lg object-cover ring-2 ring-slate-200 shadow-sm"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-bold text-slate-900 truncate">
-                                    {group.groupName}
-                                  </h4>
-                                  <div className="flex items-center gap-1.5 mt-1">
-                                    <Users className="w-3 h-3 text-slate-500" />
-                                    <span className="text-xs text-slate-600">
-                                      {group.students.length} студ.
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="dropdown dropdown-end">
-                                  <label
-                                    tabIndex={0}
-                                    className="btn btn-ghost btn-xs btn-circle"
-                                  >
-                                    <MoreVertical className="w-4 h-4 text-slate-400" />
-                                  </label>
-                                  <ul
-                                    tabIndex={0}
-                                    className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-lg w-52 border border-slate-200"
-                                  >
-                                    <li>
-                                      <a className="text-sm">
-                                        <Eye className="w-4 h-4" />
-                                        Просмотр
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a className="text-sm">
-                                        <Edit2 className="w-4 h-4" />
-                                        Редактировать
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a className="text-sm">
-                                        <Copy className="w-4 h-4" />
-                                        Дублировать
-                                      </a>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs text-slate-500">
-                                    Успеваемость
-                                  </span>
-                                  <span
-                                    className={`text-xs font-bold ${getPerformanceColor(group.groupPerformance)}`}
-                                  >
-                                    {group.groupPerformance}%
-                                  </span>
-                                </div>
-                                <progress
-                                  className="progress progress-primary w-full h-1.5"
-                                  value={group.groupPerformance}
-                                  max="100"
-                                  style={{
-                                    "--progress-color": "#64748b",
-                                  }}
-                                ></progress>
-                              </div>
-
-                              <div className="mt-2 pt-2 border-t border-slate-100">
-                                <div className="text-xs text-slate-500 truncate">
-                                  {group.groupDescribe}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      );
-                    })}
+                    <div className="text-xs text-slate-500 mt-0.5">
+                      {day.value === "even" ? "Четные" : "Нечетные"}
+                    </div>
                   </div>
                 ))}
               </div>
+              {timeSlots.map((time, timeIdx) => (
+                <div
+                  key={time}
+                  className="grid grid-cols-7 hover:bg-slate-50 transition-colors duration-200"
+                >
+                  <div className="border-r border-b border-slate-200 p-3 bg-slate-50">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-slate-500" />
+                      <span className="text-sm font-semibold text-slate-700">
+                        {time}
+                      </span>
+                    </div>
+                  </div>
+                  {days.map((day, dayIdx) => {
+                    const groups = getGroupsForSlot(time, day.value);
+                    return (
+                      <div
+                        key={dayIdx}
+                        className="border-r last:border-r-0 border-b border-slate-200 p-2 min-h-[140px]"
+                      >
+                        {isLoading
+                          ? // Показываем скелетон только в некоторых ячейках для примера
+                            dayIdx % 2 === 0 && <CalendarCardSkeleton />
+                          : groups.map((group) => (
+                              <ContextMenu
+                                key={group._id}
+                                group={group}
+                                onView={handleViewGroup}
+                                onEdit={handleEditGroup}
+                                onDuplicate={handleDuplicateGroup}
+                                onArchive={handleArchiveGroup}
+                                onDelete={handleDeleteGroup}
+                              >
+                                <div className="mb-2 last:mb-0 p-3 rounded-lg bg-white border border-slate-200 hover:shadow-md hover:border-slate-400 transition-all duration-300 cursor-pointer group">
+                                  <div className="flex items-start gap-2 mb-2">
+                                    <img
+                                      src={group.avatar}
+                                      alt={group.groupName}
+                                      className="w-10 h-10 rounded-lg object-cover ring-2 ring-slate-200 shadow-sm"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-sm font-bold text-slate-900 truncate">
+                                        {group.groupName}
+                                      </h4>
+                                      <div className="flex items-center gap-1.5 mt-1">
+                                        <Users className="w-3 h-3 text-slate-500" />
+                                        <span className="text-xs text-slate-600">
+                                          {group.students?.length || 0} студ.
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div
+                                      className="dropdown dropdown-end"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <label
+                                        tabIndex={0}
+                                        className="btn btn-ghost btn-xs btn-circle opacity-0 group-hover:opacity-100 transition-opacity"
+                                      >
+                                        <MoreVertical className="w-4 h-4 text-slate-400" />
+                                      </label>
+                                      <ul
+                                        tabIndex={0}
+                                        className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-lg w-52 border border-slate-200"
+                                      >
+                                        <li>
+                                          <a
+                                            className="text-sm"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              handleViewGroup(group);
+                                            }}
+                                          >
+                                            <Eye className="w-4 h-4" />
+                                            Просмотр
+                                          </a>
+                                        </li>
+                                        <li>
+                                          <a
+                                            className="text-sm"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              handleEditGroup(group);
+                                            }}
+                                          >
+                                            <Edit2 className="w-4 h-4" />
+                                            Редактировать
+                                          </a>
+                                        </li>
+                                        <li>
+                                          <a
+                                            className="text-sm"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              handleDuplicateGroup(group);
+                                            }}
+                                          >
+                                            <Copy className="w-4 h-4" />
+                                            Дублировать
+                                          </a>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                  </div>
+
+                                  <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-xs text-slate-500">
+                                        Успеваемость
+                                      </span>
+                                      <span
+                                        className={`text-xs font-bold ${getPerformanceColor(group.groupPerformance)}`}
+                                      >
+                                        {group.groupPerformance}%
+                                      </span>
+                                    </div>
+                                    <progress
+                                      className="progress progress-primary w-full h-1.5"
+                                      value={group.groupPerformance}
+                                      max="100"
+                                      style={{
+                                        "--progress-color": "#64748b",
+                                      }}
+                                    ></progress>
+                                  </div>
+
+                                  <div className="mt-2 pt-2 border-t border-slate-100">
+                                    <div className="text-xs text-slate-500 truncate">
+                                      {group.groupDescribe}
+                                    </div>
+                                  </div>
+                                </div>
+                              </ContextMenu>
+                            ))}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           </div>
-        </motion.div>
-      </>
+        </div>
+      </div>
     );
   };
 
-  // Table View
   const TableView = () => {
     return (
-      <motion.div
+      <div
         className="w-full"
         variants={pageAnimation}
         initial="initial"
@@ -321,7 +570,7 @@ const Groups = ({ mockGroups, reload }) => {
                     <td>
                       <div className="flex items-center gap-2">
                         <div className="avatar-group -space-x-3">
-                          {group.students.slice(0, 3).map((student) => (
+                          {group.students?.slice(0, 3).map((student) => (
                             <div key={student._id} className="avatar">
                               <div className="w-7 h-7">
                                 <img
@@ -332,7 +581,7 @@ const Groups = ({ mockGroups, reload }) => {
                               </div>
                             </div>
                           ))}
-                          {group.students.length > 3 && (
+                          {group.students?.length > 3 && (
                             <div className="avatar placeholder">
                               <div className="w-7 h-7 bg-slate-200">
                                 <span className="text-xs font-semibold text-slate-600">
@@ -343,7 +592,7 @@ const Groups = ({ mockGroups, reload }) => {
                           )}
                         </div>
                         <span className="text-sm text-slate-600 font-medium ml-1">
-                          {group.students.length}
+                          {group.students?.length || 0}
                         </span>
                       </div>
                     </td>
@@ -386,19 +635,21 @@ const Groups = ({ mockGroups, reload }) => {
                       <div className="flex items-center gap-1.5 text-sm">
                         <User className="w-3.5 h-3.5 text-slate-500" />
                         <span className="text-slate-700 font-medium">
-                          {group.mentor.name}
+                          {group.mentor?.name}
                         </span>
                       </div>
                     </td>
                     <td>
                       <div className="flex items-center gap-1">
                         <button
+                          onClick={() => handleEditGroup(group)}
                           className="btn btn-ghost btn-xs btn-circle tooltip"
                           data-tip="Редактировать"
                         >
                           <Edit2 className="w-4 h-4 text-slate-500 hover:text-slate-700" />
                         </button>
                         <button
+                          onClick={() => handleDeleteGroup(group)}
                           className="btn btn-ghost btn-xs btn-circle tooltip"
                           data-tip="Удалить"
                         >
@@ -411,6 +662,7 @@ const Groups = ({ mockGroups, reload }) => {
                           <Settings className="w-4 h-4 text-slate-500 hover:text-slate-700" />
                         </button>
                         <button
+                          onClick={() => handleArchiveGroup(group)}
                           className="btn btn-ghost btn-xs btn-circle tooltip"
                           data-tip="Архивировать"
                         >
@@ -424,14 +676,14 @@ const Groups = ({ mockGroups, reload }) => {
             </table>
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   };
 
   // Cards View
   const CardsView = () => {
     return (
-      <motion.div
+      <div
         variants={pageAnimation}
         initial="initial"
         animate="animate"
@@ -491,11 +743,11 @@ const Groups = ({ mockGroups, reload }) => {
                       Студенты
                     </span>
                     <span className="text-xs font-semibold text-slate-600">
-                      {group.students.length} чел.
+                      {group.students?.length || 0} чел.
                     </span>
                   </div>
                   <div className="avatar-group -space-x-3">
-                    {group.students.slice(0, 5).map((student) => (
+                    {group.students?.slice(0, 5).map((student) => (
                       <div
                         key={student._id}
                         className="avatar tooltip"
@@ -509,7 +761,7 @@ const Groups = ({ mockGroups, reload }) => {
                         </div>
                       </div>
                     ))}
-                    {group.students.length > 5 && (
+                    {group.students?.length > 5 && (
                       <div className="avatar placeholder">
                         <div className="w-8 h-8 bg-slate-300">
                           <span className="text-xs font-bold text-slate-700">
@@ -522,7 +774,7 @@ const Groups = ({ mockGroups, reload }) => {
 
                   <div className="flex flex-wrap gap-1.5 mt-2.5">
                     {Array.from(
-                      new Set(group.students.map((s) => s.grade))
+                      new Set(group.students?.map((s) => s.grade) || [])
                     ).map((grade) => {
                       const count = group.students.filter(
                         (s) => s.grade === grade
@@ -549,7 +801,7 @@ const Groups = ({ mockGroups, reload }) => {
                   <div className="flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-slate-500" />
                     <span className="text-xs text-slate-600 font-medium">
-                      {group.mentor.name}
+                      {group.mentor?.name}
                     </span>
                   </div>
                 </div>
@@ -557,7 +809,7 @@ const Groups = ({ mockGroups, reload }) => {
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     );
   };
 
@@ -665,7 +917,13 @@ const Groups = ({ mockGroups, reload }) => {
                   <Users className="w-8 h-8" />
                 </div>
                 <div className="stat-title text-slate-300">Всего групп</div>
-                <div className="stat-value text-white">{mockGroups.length}</div>
+                <div className="stat-value text-white">
+                  {isLoading ? (
+                    <div className="h-10 w-16 bg-slate-600 rounded animate-pulse"></div>
+                  ) : (
+                    mockGroups.length
+                  )}
+                </div>
               </div>
             </div>
 
@@ -676,7 +934,14 @@ const Groups = ({ mockGroups, reload }) => {
                 </div>
                 <div className="stat-title text-slate-300">Студентов</div>
                 <div className="stat-value text-white">
-                  {mockGroups.reduce((acc, g) => acc + g.students.length, 0)}
+                  {isLoading ? (
+                    <div className="h-10 w-16 bg-slate-500 rounded animate-pulse"></div>
+                  ) : (
+                    mockGroups.reduce(
+                      (acc, g) => acc + (g.students?.length || 0),
+                      0
+                    )
+                  )}
                 </div>
               </div>
             </div>
@@ -690,11 +955,18 @@ const Groups = ({ mockGroups, reload }) => {
                   Средняя производительность
                 </div>
                 <div className="stat-value text-white">
-                  {Math.round(
-                    mockGroups.reduce((acc, g) => acc + g.groupPerformance, 0) /
-                      mockGroups.length
+                  {isLoading ? (
+                    <div className="h-10 w-16 bg-slate-400 rounded animate-pulse"></div>
+                  ) : mockGroups.length > 0 ? (
+                    `${Math.round(
+                      mockGroups.reduce(
+                        (acc, g) => acc + g.groupPerformance,
+                        0
+                      ) / mockGroups.length
+                    )}%`
+                  ) : (
+                    "0%"
                   )}
-                  %
                 </div>
               </div>
             </div>
@@ -706,16 +978,29 @@ const Groups = ({ mockGroups, reload }) => {
                 </div>
                 <div className="stat-title text-slate-700">Telegram-групп</div>
                 <div className="stat-value text-white">
-                  {mockGroups.filter((g) => g.telegramId).length}
+                  {isLoading ? (
+                    <div className="h-10 w-16 bg-slate-300 rounded animate-pulse"></div>
+                  ) : (
+                    mockGroups.filter((g) => g.telegramId).length
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
           {/* View Content */}
-          {viewMode === "calendar" && <CalendarView />}
-          {viewMode === "table" && <TableView />}
-          {viewMode === "cards" && <CardsView />}
+          {isLoading && viewMode !== "calendar" ? (
+            <>
+              {viewMode === "table" && <TableSkeleton />}
+              {viewMode === "cards" && <CardsSkeleton />}
+            </>
+          ) : (
+            <>
+              {viewMode === "calendar" && <CalendarView />}
+              {viewMode === "table" && <TableView />}
+              {viewMode === "cards" && <CardsView />}
+            </>
+          )}
         </div>
 
         {/* Create Group Modal */}
@@ -725,6 +1010,15 @@ const Groups = ({ mockGroups, reload }) => {
           onSuccess={handleCreateSuccess}
           reload={reload}
         />
+
+        {modalType === "edit" && (
+          <EditGroupModal
+            setModalType={setModalType}
+            group={modalData}
+            onSubmit={updateGroup}
+            reload={reload}
+          />
+        )}
       </div>
     </motion.div>
   );
