@@ -28,6 +28,7 @@ import RecentActivity from "../components/home/RecentActivity";
 import UpcomingExams from "../components/home/UpcomingExams";
 import PerformanceChart from "../components/home/PerformanceChart";
 import StudentDistributionChart from "../components/home/StudentDistributionChart";
+import { useNavigate } from "react-router-dom";
 
 // Регистрация компонентов Chart.js
 ChartJS.register(
@@ -40,10 +41,11 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler,
+  Filler
 );
 
 const Home = ({ groups = [], students = [], exams = [] }) => {
+  const navigate = useNavigate();
   // Статические данные для демонстрации (если пропсы пусты)
   const mockGroups = [
     {
@@ -135,7 +137,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
   const stats = useMemo(() => {
     const totalStudents = actualStudents.length;
     const activeGroups = actualGroups.filter(
-      (g) => g.students && g.students.length > 0,
+      (g) => g.students && g.students.length > 0
     ).length;
 
     // Экзамены сегодня
@@ -150,7 +152,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
     });
 
     const completedToday = todayExams.filter(
-      (e) => e.status === "completed",
+      (e) => e.status === "completed"
     ).length;
 
     return {
@@ -392,7 +394,10 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
             <h2 className="text-lg font-semibold text-slate-700">
               Активные группы
             </h2>
-            <button className="text-sm text-slate-500 hover:text-slate-700 transition-colors">
+            <button
+              onClick={() => navigate(`/dashboard/groups`)}
+              className="text-sm text-slate-500 hover:text-slate-700 transition-colors"
+            >
               Посмотреть все →
             </button>
           </div>

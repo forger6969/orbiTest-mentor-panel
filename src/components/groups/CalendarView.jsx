@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Clock, Users, MoreVertical, Edit2, Copy, Eye } from "lucide-react";
 import ContextMenu from "../ContextMenu";
@@ -18,18 +18,6 @@ const CalendarView = ({
   handleArchiveGroup,
   handleDeleteGroup,
 }) => {
-  const timeSlots = [
-    "10:00",
-    "12:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "19:30",
-    "20:00",
-  ];
   const days = [
     { label: "Понедельник", value: "odd", short: "Пн" },
     { label: "Вторник", value: "even", short: "Вт" },
@@ -39,6 +27,26 @@ const CalendarView = ({
     { label: "Суббота", value: "even", short: "Сб" },
   ];
 
+  // Автоматически собираем все уникальные времена из групп и сортируем
+  const timeSlots = useMemo(() => {
+    const times = new Set();
+
+    mockGroups.forEach((group) => {
+      if (group.groupTime) {
+        // Нормализуем время (убираем секунды если есть)
+        const normalizedTime = group.groupTime.split(":").slice(0, 2).join(":");
+        times.add(normalizedTime);
+      }
+    });
+
+    // Преобразуем в массив и сортируем по времени
+    return Array.from(times).sort((a, b) => {
+      const [hoursA, minutesA] = a.split(":").map(Number);
+      const [hoursB, minutesB] = b.split(":").map(Number);
+      return hoursA * 60 + minutesA - (hoursB * 60 + minutesB);
+    });
+  }, [mockGroups]);
+
   const getPerformanceColor = (performance) => {
     if (performance >= 90) return "text-slate-700";
     if (performance >= 75) return "text-slate-600";
@@ -47,9 +55,11 @@ const CalendarView = ({
   };
 
   const getGroupsForSlot = (time, dayType) => {
-    return mockGroups.filter(
-      (g) => g.groupTime === time && g.groupDay === dayType,
-    );
+    return mockGroups.filter((g) => {
+      // Нормализуем время группы
+      const normalizedGroupTime = g.groupTime?.split(":").slice(0, 2).join(":");
+      return normalizedGroupTime === time && g.groupDay === dayType;
+    });
   };
 
   const CalendarCardSkeleton = () => {
@@ -68,6 +78,23 @@ const CalendarView = ({
     );
   };
 
+  // Показываем сообщение если нет групп
+  if (!isLoading && timeSlots.length === 0) {
+    return (
+      <div className="card bg-base-100 shadow-lg border border-slate-200 p-12">
+        <div className="text-center">
+          <Clock className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-slate-700 mb-2">
+            Нет групп в расписании
+          </h3>
+          <p className="text-slate-500">
+            Создайте группу с указанием времени и дня занятий
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="w-full"
@@ -80,6 +107,7 @@ const CalendarView = ({
       <div className="card bg-base-100 shadow-lg border border-slate-200">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
+            {/* Header */}
             <div className="grid grid-cols-7 bg-slate-50">
               <div className="border-r border-b border-slate-200 p-3 bg-white">
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -100,6 +128,8 @@ const CalendarView = ({
                 </div>
               ))}
             </div>
+
+            {/* Time Slots */}
             {timeSlots.map((time, timeIdx) => (
               <div
                 key={time}

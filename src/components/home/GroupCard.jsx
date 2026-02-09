@@ -6,10 +6,15 @@ import {
   MessageCircle,
   UserCheck,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const GroupCard = ({ group }) => {
+  const navigate = useNavigate();
+  console.log(group);
+
   return (
     <div
+      onClick={() => navigate(`/dashboard/groups/${group._id}`)}
       className="
          group
          rounded-2xl

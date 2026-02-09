@@ -128,7 +128,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
     console.log("Удаление группы:", group);
     if (
       window.confirm(
-        `Вы уверены, что хотите удалить группу "${group.groupName}"?`,
+        `Вы уверены, что хотите удалить группу "${group.groupName}"?`
       )
     ) {
       toast.success(`Группа "${group.groupName}" удалена`);
@@ -147,7 +147,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const data = await req.data;
@@ -346,7 +346,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
               {/* Create Group Button */}
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="btn btn-primary gap-2 shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                className="bg-indigo-600 px-5 flex items-center py-2 rounded-sm text-white gap-2 shadow-lg hover:shadow-xl hover:scale-105 transition-all"
               >
                 <Plus className="w-5 h-5" />
                 Yangi Guruh

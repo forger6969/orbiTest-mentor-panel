@@ -185,7 +185,7 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess, reload }) => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Yuklanmoqda..." : "Yaratish"}
             </button>
