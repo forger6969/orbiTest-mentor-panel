@@ -13,6 +13,8 @@ import { useSocket } from "../hooks/useSocket";
 import CreateGroup from "./CreateGroup";
 import { AnimatePresence } from "framer-motion";
 import GroupDetails from "./GroupDetails";
+import UpcomingExams from "../components/home/UpcomingExams";
+import Exam from "./Exam";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(false);
@@ -35,7 +37,7 @@ const Dashboard = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
       console.log(req.data);
       setUser(req.data);
@@ -73,7 +75,7 @@ const Dashboard = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
       const res = await req.data;
       console.log(res);
@@ -134,6 +136,7 @@ const Dashboard = () => {
               />
               <Route path="/groups/create" element={<CreateGroup />} />
               <Route path="/groups/:groupId" element={<GroupDetails />} />
+              <Route path="/exams" element={<Exam groups={user.groups} />} />
             </Routes>
           </AnimatePresence>
         </div>
