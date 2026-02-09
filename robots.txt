@@ -1,0 +1,25 @@
+# robots.txt для OrbiTest
+User-agent: *
+Allow: /
+
+# Запрет индексации административных разделов
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+
+# Карта сайта
+Sitemap: https://orbitest-mentor.netlify.app/sitemap.xml
+
+# Время обхода (в секундах)
+Crawl-delay: 1
+
+# Специфичные правила для основных поисковых ботов
+User-agent: Googlebot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+Host: orbitest-mentor.netlify.app
+
+User-agent: Bingbot
+Allow: /
