@@ -49,10 +49,10 @@ const CalendarView = ({
   }, [mockGroups]);
 
   const getPerformanceColor = (performance) => {
-    if (performance >= 90) return "text-slate-700";
-    if (performance >= 75) return "text-slate-600";
-    if (performance >= 60) return "text-slate-500";
-    return "text-slate-400";
+    if (performance >= 90) return "text-green-600";
+    if (performance >= 75) return "text-blue-600";
+    if (performance >= 60) return "text-orange-600";
+    return "text-red-600";
   };
 
   const getGroupsForSlot = (time, dayType) => {
@@ -65,16 +65,16 @@ const CalendarView = ({
 
   const CalendarCardSkeleton = () => {
     return (
-      <div className="mb-2 p-3 rounded-lg bg-white border border-slate-200">
+      <div className="mb-2 p-3 rounded-lg bg-white border border-gray-200">
         <div className="flex items-start gap-2 mb-2">
-          <div className="w-10 h-10 bg-slate-200 rounded-lg animate-pulse"></div>
+          <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
           <div className="flex-1">
-            <div className="h-4 w-24 bg-slate-200 rounded animate-pulse mb-2"></div>
-            <div className="h-3 w-16 bg-slate-200 rounded animate-pulse"></div>
+            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse mb-2"></div>
+            <div className="h-3 w-16 bg-gray-200 rounded animate-pulse"></div>
           </div>
         </div>
-        <div className="h-2 w-full bg-slate-200 rounded animate-pulse mb-2"></div>
-        <div className="h-3 w-full bg-slate-200 rounded animate-pulse"></div>
+        <div className="h-2 w-full bg-gray-200 rounded animate-pulse mb-2"></div>
+        <div className="h-3 w-full bg-gray-200 rounded animate-pulse"></div>
       </div>
     );
   };
@@ -82,13 +82,13 @@ const CalendarView = ({
   // Показываем сообщение если нет групп
   if (!isLoading && timeSlots.length === 0) {
     return (
-      <div className="card bg-base-100 shadow-lg border border-slate-200 p-12">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
         <div className="text-center">
-          <Clock className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-slate-700 mb-2">
+          <Clock className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
             Нет групп в расписании
           </h3>
-          <p className="text-slate-500">
+          <p className="text-gray-500">
             Создайте группу с указанием времени и дня занятий
           </p>
         </div>
@@ -105,25 +105,25 @@ const CalendarView = ({
       exit="exit"
       transition={{ duration: 0.2 }}
     >
-      <div className="card bg-base-100 shadow-lg border border-slate-200">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             {/* Header */}
-            <div className="grid grid-cols-7 bg-slate-50">
-              <div className="border-r border-b border-slate-200 p-3 bg-white">
-                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <div className="grid grid-cols-7 bg-gray-50">
+              <div className="border-r border-b border-gray-200 p-4 bg-white">
+                <div className="text-xs font-bold text-gray-600 uppercase tracking-wider">
                   Время
                 </div>
               </div>
               {days.map((day, idx) => (
                 <div
                   key={idx}
-                  className="border-r last:border-r-0 border-b border-slate-200 p-3 bg-white"
+                  className="border-r last:border-r-0 border-b border-gray-200 p-4 bg-white"
                 >
-                  <div className="text-sm font-bold text-slate-900">
+                  <div className="text-sm font-bold text-gray-900">
                     {day.label}
                   </div>
-                  <div className="text-xs text-slate-500 mt-0.5">
+                  <div className="text-xs text-gray-500 mt-1">
                     {day.value === "even" ? "Четные" : "Нечетные"}
                   </div>
                 </div>
@@ -134,12 +134,12 @@ const CalendarView = ({
             {timeSlots.map((time, timeIdx) => (
               <div
                 key={time}
-                className="grid grid-cols-7 hover:bg-slate-50 transition-colors duration-200"
+                className="grid grid-cols-7 hover:bg-gray-50 transition-colors duration-200"
               >
-                <div className="border-r border-b border-slate-200 p-3 bg-slate-50">
+                <div className="border-r border-b border-gray-200 p-4 bg-gray-50">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-slate-500" />
-                    <span className="text-sm font-semibold text-slate-700">
+                    <Clock className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm font-semibold text-gray-900">
                       {time}
                     </span>
                   </div>
@@ -149,7 +149,7 @@ const CalendarView = ({
                   return (
                     <div
                       key={dayIdx}
-                      className="border-r last:border-r-0 border-b border-slate-200 p-2 min-h-[140px]"
+                      className="border-r last:border-r-0 border-b border-gray-200 p-2 min-h-[140px]"
                     >
                       {isLoading
                         ? dayIdx % 2 === 0 && <CalendarCardSkeleton />
@@ -163,20 +163,20 @@ const CalendarView = ({
                               onArchive={handleArchiveGroup}
                               onDelete={handleDeleteGroup}
                             >
-                              <div className="mb-2 last:mb-0 p-3 rounded-lg bg-white border border-slate-200 hover:shadow-md hover:border-slate-400 transition-all duration-300 cursor-pointer group">
+                              <div className="mb-2 last:mb-0 p-3 rounded-lg bg-white border border-gray-200 hover:shadow-md hover:border-indigo-400 transition-all duration-300 cursor-pointer group">
                                 <div className="flex items-start gap-2 mb-2">
                                   <img
                                     src={group.avatar}
                                     alt={group.groupName}
-                                    className="w-10 h-10 rounded-lg object-cover ring-2 ring-slate-200 shadow-sm"
+                                    className="w-10 h-10 rounded-lg object-cover ring-2 ring-gray-200 shadow-sm"
                                   />
                                   <div className="flex-1 min-w-0">
-                                    <h4 className="text-sm font-bold text-slate-900 truncate">
+                                    <h4 className="text-sm font-bold text-gray-900 truncate">
                                       {group.groupName}
                                     </h4>
                                     <div className="flex items-center gap-1.5 mt-1">
-                                      <Users className="w-3 h-3 text-slate-500" />
-                                      <span className="text-xs text-slate-600">
+                                      <Users className="w-3 h-3 text-gray-500" />
+                                      <span className="text-xs text-gray-600">
                                         {group.students?.length || 0} студ.
                                       </span>
                                     </div>
@@ -189,15 +189,15 @@ const CalendarView = ({
                                       tabIndex={0}
                                       className="btn btn-ghost btn-xs btn-circle opacity-0 group-hover:opacity-100 transition-opacity"
                                     >
-                                      <MoreVertical className="w-4 h-4 text-slate-400" />
+                                      <MoreVertical className="w-4 h-4 text-gray-400" />
                                     </label>
                                     <ul
                                       tabIndex={0}
-                                      className="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-lg w-52 border border-slate-200"
+                                      className="dropdown-content z-[1] menu p-2 shadow-lg bg-white rounded-lg w-52 border border-gray-200"
                                     >
                                       <li>
                                         <a
-                                          className="text-sm"
+                                          className="text-sm hover:bg-gray-50"
                                           onClick={(e) => {
                                             e.preventDefault();
                                             handleViewGroup(group);
@@ -209,7 +209,7 @@ const CalendarView = ({
                                       </li>
                                       <li>
                                         <a
-                                          className="text-sm"
+                                          className="text-sm hover:bg-gray-50"
                                           onClick={(e) => {
                                             e.preventDefault();
                                             handleEditGroup(group);
@@ -221,7 +221,7 @@ const CalendarView = ({
                                       </li>
                                       <li>
                                         <a
-                                          className="text-sm"
+                                          className="text-sm hover:bg-gray-50"
                                           onClick={(e) => {
                                             e.preventDefault();
                                             handleDuplicateGroup(group);
@@ -237,7 +237,7 @@ const CalendarView = ({
 
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-xs text-slate-500">
+                                    <span className="text-xs text-gray-500">
                                       Успеваемость
                                     </span>
                                     <span
@@ -246,18 +246,18 @@ const CalendarView = ({
                                       {group.groupPerformance}%
                                     </span>
                                   </div>
-                                  <progress
-                                    className="progress progress-primary w-full h-1.5"
-                                    value={group.groupPerformance}
-                                    max="100"
-                                    style={{
-                                      "--progress-color": "#64748b",
-                                    }}
-                                  ></progress>
+                                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                    <div
+                                      className="bg-indigo-600 h-1.5 rounded-full transition-all"
+                                      style={{
+                                        width: `${group.groupPerformance}%`,
+                                      }}
+                                    ></div>
+                                  </div>
                                 </div>
 
-                                <div className="mt-2 pt-2 border-t border-slate-100">
-                                  <div className="text-xs text-slate-500 truncate">
+                                <div className="mt-2 pt-2 border-t border-gray-100">
+                                  <div className="text-xs text-gray-500 truncate">
                                     {group.groupDescribe}
                                   </div>
                                 </div>

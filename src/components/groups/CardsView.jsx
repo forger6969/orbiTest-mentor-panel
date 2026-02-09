@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { TrendingUp, Clock } from "lucide-react";
+import { TrendingUp, Clock, Users } from "lucide-react";
 
 const pageAnimation = {
   initial: { opacity: 0, x: -50 },
@@ -10,18 +10,18 @@ const pageAnimation = {
 };
 
 const getPerformanceColor = (performance) => {
-  if (performance >= 90) return "text-slate-700";
-  if (performance >= 75) return "text-slate-600";
-  if (performance >= 60) return "text-slate-500";
-  return "text-slate-400";
+  if (performance >= 90) return "text-green-600";
+  if (performance >= 75) return "text-blue-600";
+  if (performance >= 60) return "text-orange-600";
+  return "text-red-600";
 };
 
 const gradeColors = {
-  junior: "bg-slate-200 text-slate-700",
-  strongJunior: "bg-slate-300 text-slate-800",
-  middle: "bg-slate-400 text-slate-900",
-  strongMiddle: "bg-slate-500 text-white",
-  senior: "bg-slate-600 text-white",
+  junior: "bg-blue-50 text-blue-700 border border-blue-200",
+  strongJunior: "bg-blue-100 text-blue-800 border border-blue-300",
+  middle: "bg-indigo-100 text-indigo-800 border border-indigo-300",
+  strongMiddle: "bg-purple-100 text-purple-800 border border-purple-300",
+  senior: "bg-purple-200 text-purple-900 border border-purple-400",
 };
 
 const gradeLabels = {
@@ -39,43 +39,43 @@ const CardsView = ({ mockGroups, isLoading }) => {
         {Array.from({ length: 6 }, (_, i) => (
           <div
             key={i}
-            className="card bg-base-100 shadow-lg border border-slate-200"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
           >
-            <figure className="relative h-32 bg-slate-200 animate-pulse"></figure>
-            <div className="card-body p-4">
-              <div className="h-5 w-3/4 bg-slate-200 rounded animate-pulse mb-2"></div>
-              <div className="h-4 w-full bg-slate-200 rounded animate-pulse mb-1"></div>
-              <div className="h-4 w-5/6 bg-slate-200 rounded animate-pulse mb-4"></div>
+            <div className="relative h-40 bg-gray-200 animate-pulse"></div>
+            <div className="p-5">
+              <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse mb-3"></div>
+              <div className="h-4 w-full bg-gray-200 rounded animate-pulse mb-2"></div>
+              <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse mb-4"></div>
 
-              <div className="h-10 w-full bg-slate-200 rounded-lg animate-pulse mb-4"></div>
+              <div className="h-12 w-full bg-gray-200 rounded-lg animate-pulse mb-4"></div>
 
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="h-3 w-16 bg-slate-200 rounded animate-pulse"></div>
-                  <div className="h-3 w-12 bg-slate-200 rounded animate-pulse"></div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="h-3 w-20 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-3 w-12 bg-gray-200 rounded animate-pulse"></div>
                 </div>
-                <div className="flex -space-x-3">
+                <div className="flex -space-x-2 mb-3">
                   {Array.from({ length: 5 }, (_, j) => (
                     <div
                       key={j}
-                      className="w-8 h-8 bg-slate-200 rounded-full animate-pulse"
+                      className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"
                     ></div>
                   ))}
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                <div className="flex flex-wrap gap-2">
                   {Array.from({ length: 3 }, (_, j) => (
                     <div
                       key={j}
-                      className="h-5 w-20 bg-slate-200 rounded animate-pulse"
+                      className="h-6 w-24 bg-gray-200 rounded-full animate-pulse"
                     ></div>
                   ))}
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pt-3 border-t border-slate-100 mt-4">
-                <div className="h-3 w-20 bg-slate-200 rounded animate-pulse"></div>
-                <div className="h-3 w-24 bg-slate-200 rounded animate-pulse"></div>
+              <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
+                <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
               </div>
             </div>
           </div>
@@ -98,19 +98,19 @@ const CardsView = ({ mockGroups, isLoading }) => {
         {mockGroups.map((group, idx) => (
           <div
             key={group._id}
-            className="card bg-base-100 shadow-lg border border-slate-200 hover:shadow-xl hover:border-slate-400 transition-all duration-300 cursor-pointer"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-indigo-300 transition-all duration-300 cursor-pointer overflow-hidden group"
           >
-            <figure className="relative h-32 bg-slate-600">
+            <div className="relative h-40 bg-gradient-to-br from-indigo-500 to-indigo-700 overflow-hidden">
               <img
                 src={group.avatar}
                 alt={group.groupName}
-                className="w-full h-full object-cover opacity-80 hover:scale-110 transition-transform duration-500"
+                className="w-full h-full object-cover opacity-30 group-hover:scale-110 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-              <div className="badge badge-ghost absolute top-2.5 right-2.5 bg-white/95 border-0 shadow-lg gap-1.5">
+              <div className="absolute top-3 right-3 bg-white rounded-lg px-3 py-1.5 shadow-lg flex items-center gap-1.5">
                 <TrendingUp
-                  className={`w-3.5 h-3.5 ${getPerformanceColor(group.groupPerformance)}`}
+                  className={`w-4 h-4 ${getPerformanceColor(group.groupPerformance)}`}
                 />
                 <span
                   className={`text-sm font-bold ${getPerformanceColor(group.groupPerformance)}`}
@@ -119,74 +119,74 @@ const CardsView = ({ mockGroups, isLoading }) => {
                 </span>
               </div>
 
-              <div className="badge badge-ghost absolute top-2.5 left-2.5 bg-white/95 border-0 shadow-lg">
-                <span className="text-xs font-bold text-slate-700">
+              <div className="absolute top-3 left-3 bg-white rounded-lg px-3 py-1.5 shadow-lg">
+                <span className="text-xs font-bold text-gray-700">
                   {group.groupDay === "even" ? "Четные" : "Нечетные"}
                 </span>
               </div>
-            </figure>
+            </div>
 
-            <div className="card-body p-4">
-              <h3 className="card-title text-base text-slate-900">
+            <div className="p-5">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
                 {group.groupName}
               </h3>
-              <p className="text-sm text-slate-500 line-clamp-2">
+              <p className="text-sm text-gray-600 line-clamp-2 mb-4">
                 {group.groupDescribe}
               </p>
 
-              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50">
-                <Clock className="w-4 h-4 text-slate-500" />
-                <span className="text-sm font-bold text-slate-700">
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 mb-4">
+                <Clock className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-bold text-gray-900">
                   {group.groupTime}
                 </span>
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Студенты
-                  </span>
-                  <span className="text-xs font-semibold text-slate-600">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-gray-500" />
+                    <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Студенты
+                    </span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">
                     {group.students?.length || 0} чел.
                   </span>
                 </div>
-                <div className="avatar-group -space-x-3">
+                <div className="flex -space-x-2 mb-3">
                   {group.students?.slice(0, 5).map((student) => (
                     <div
                       key={student._id}
-                      className="avatar tooltip"
-                      data-tip={`${student.firstName} ${student.lastName}`}
+                      className="w-10 h-10 rounded-full ring-2 ring-white overflow-hidden"
+                      title={`${student.firstName} ${student.lastName}`}
                     >
-                      <div className="w-8 h-8">
-                        <img
-                          src={student.avatar}
-                          alt={`${student.firstName} ${student.lastName}`}
-                        />
-                      </div>
+                      <img
+                        src={student.avatar}
+                        alt={`${student.firstName} ${student.lastName}`}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   ))}
                   {group.students?.length > 5 && (
-                    <div className="avatar placeholder">
-                      <div className="w-8 h-8 bg-slate-300">
-                        <span className="text-xs font-bold text-slate-700">
-                          +{group.students.length - 5}
-                        </span>
-                      </div>
+                    <div className="w-10 h-10 rounded-full ring-2 ring-white bg-gray-200 flex items-center justify-center">
+                      <span className="text-xs font-bold text-gray-700">
+                        +{group.students.length - 5}
+                      </span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 mt-2.5">
+                <div className="flex flex-wrap gap-2">
                   {Array.from(
-                    new Set(group.students?.map((s) => s.grade) || []),
+                    new Set(group.students?.map((s) => s.grade) || [])
                   ).map((grade) => {
                     const count = group.students.filter(
-                      (s) => s.grade === grade,
+                      (s) => s.grade === grade
                     ).length;
                     return (
                       <span
                         key={grade}
-                        className={`badge badge-sm ${gradeColors[grade]}`}
+                        className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${gradeColors[grade]}`}
                       >
                         {gradeLabels[grade]} ({count})
                       </span>
@@ -195,14 +195,16 @@ const CardsView = ({ mockGroups, isLoading }) => {
                 </div>
               </div>
 
-              <div className="card-actions justify-between items-center pt-3 border-t border-slate-100">
+              <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-slate-600 font-medium">
+                  <span className="text-xs text-gray-500">Telegram:</span>
+                  <span className="text-xs text-gray-900 font-medium">
                     {group.telegramId}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-slate-600 font-medium">
+                  <span className="text-xs text-gray-500">Ментор:</span>
+                  <span className="text-xs text-gray-900 font-medium">
                     {group.mentor?.name}
                   </span>
                 </div>

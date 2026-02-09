@@ -10,7 +10,7 @@ const GroupStats = ({ groups }) => {
   const getAveragePerformance = () => {
     if (groups.length === 0) return "0%";
     const avg = Math.round(
-      groups.reduce((acc, g) => acc + g.groupPerformance, 0) / groups.length,
+      groups.reduce((acc, g) => acc + g.groupPerformance, 0) / groups.length
     );
     return `${avg}%`;
   };
@@ -21,45 +21,63 @@ const GroupStats = ({ groups }) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-      <div className="stats shadow-lg border border-slate-200 bg-slate-700 text-white">
-        <div className="stat">
-          <div className="stat-figure text-white">
-            <Users className="w-8 h-8" />
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-600 mb-1">
+              Всего групп
+            </p>
+            <p className="text-3xl font-bold text-gray-900">{groups.length}</p>
           </div>
-          <div className="stat-title text-slate-300">Всего групп</div>
-          <div className="stat-value text-white">{groups.length}</div>
+          <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center">
+            <Users className="w-6 h-6 text-indigo-600" />
+          </div>
         </div>
       </div>
 
-      <div className="stats shadow-lg border border-slate-200 bg-slate-600 text-white">
-        <div className="stat">
-          <div className="stat-figure text-white">
-            <User className="w-8 h-8" />
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-600 mb-1">Студентов</p>
+            <p className="text-3xl font-bold text-gray-900">
+              {getTotalStudents()}
+            </p>
           </div>
-          <div className="stat-title text-slate-300">Студентов</div>
-          <div className="stat-value text-white">{getTotalStudents()}</div>
+          <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+            <User className="w-6 h-6 text-blue-600" />
+          </div>
         </div>
       </div>
 
-      <div className="stats shadow-lg border border-slate-200 bg-slate-500 text-white">
-        <div className="stat">
-          <div className="stat-figure text-white">
-            <TrendingUp className="w-8 h-8" />
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-600 mb-1">
+              Средняя производительность
+            </p>
+            <p className="text-3xl font-bold text-gray-900">
+              {getAveragePerformance()}
+            </p>
           </div>
-          <div className="stat-title text-slate-300">
-            Средняя производительность
+          <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+            <TrendingUp className="w-6 h-6 text-green-600" />
           </div>
-          <div className="stat-value text-white">{getAveragePerformance()}</div>
         </div>
       </div>
 
-      <div className="stats shadow-lg border border-slate-200 bg-slate-400 text-white">
-        <div className="stat">
-          <div className="stat-figure text-white">
-            <MessageCircle className="w-8 h-8" />
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-600 mb-1">
+              Telegram-групп
+            </p>
+            <p className="text-3xl font-bold text-gray-900">
+              {getTelegramCount()}
+            </p>
           </div>
-          <div className="stat-title text-slate-700">Telegram-групп</div>
-          <div className="stat-value text-white">{getTelegramCount()}</div>
+          <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+            <MessageCircle className="w-6 h-6 text-purple-600" />
+          </div>
         </div>
       </div>
     </div>

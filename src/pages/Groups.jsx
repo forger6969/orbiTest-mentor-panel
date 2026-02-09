@@ -45,7 +45,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
   const [modalType, setModalType] = useState("");
   const [modalData, setModalData] = useState(null);
   const navigate = useNavigate();
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
   const gradeColors = {
     junior: "bg-slate-200 text-slate-700",
@@ -130,7 +130,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
     console.log("Удаление группы:", group);
     if (
       window.confirm(
-        `Вы уверены, что хотите удалить группу "${group.groupName}"?`,
+        `Вы уверены, что хотите удалить группу "${group.groupName}"?`
       )
     ) {
       toast.success(`Группа "${group.groupName}" удалена`);
@@ -149,7 +149,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const data = await req.data;
@@ -389,7 +389,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
                       className={viewMode === "calendar" ? "active" : ""}
                     >
                       <Calendar className="w-4 h-4" />
-                      Календарь
+                      {t("groups.calendarView")}
                     </a>
                   </li>
                   <li>
@@ -398,7 +398,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
                       className={viewMode === "table" ? "active" : ""}
                     >
                       <Table className="w-4 h-4" />
-                      Таблица
+                      {t("groups.tableView")}
                     </a>
                   </li>
                   <li>
@@ -407,7 +407,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
                       className={viewMode === "cards" ? "active" : ""}
                     >
                       <LayoutGrid className="w-4 h-4" />
-                      Карточки
+                      {t("groups.cardsView")}
                     </a>
                   </li>
                 </ul>
@@ -440,6 +440,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
               handleEditGroup={handleEditGroup}
               handleDeleteGroup={handleDeleteGroup}
               handleArchiveGroup={handleArchiveGroup}
+              handleViewGroup={handleViewGroup}
             />
           )}
           {viewMode === "cards" && (

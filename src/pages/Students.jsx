@@ -1,22 +1,11 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Users,
   Search,
-  User,
-  Mail,
-  Layers,
-  TrendingUp,
   Circle,
   FileText,
-  Clock,
-  Edit3,
-  X,
-  Save,
-  Eye,
-  UserCog,
   UserPlus,
-  Lock,
+  X,
   ChevronDown,
   Check,
 } from "lucide-react";
@@ -26,29 +15,13 @@ import StudentTable from "../components/students/StudentTable";
 import EditGroupModal from "../components/students/EditGroupModal";
 import axios from "axios";
 
-const gradeColors = {
-  junior: "bg-slate-200 text-slate-700",
-  strongJunior: "bg-slate-300 text-slate-800",
-  middle: "bg-slate-400 text-slate-900",
-  strongMiddle: "bg-slate-500 text-white",
-  senior: "bg-slate-600 text-white",
-};
-
-const gradeLabels = {
-  junior: "Junior",
-  strongJunior: "Strong Junior",
-  middle: "Middle",
-  strongMiddle: "Strong Middle",
-  senior: "Senior",
-};
-
 const pageAnimation = {
   initial: { opacity: 0, x: -50 },
   animate: { opacity: 1, x: 0 },
   exit: { opacity: 0, x: 50 },
 };
 
-// Компонент кастомного Select с поиском (открывается вверх)
+// Компонент кастомного Select с поиском
 const CustomSelect = ({
   groups,
   selectedGroup,
@@ -65,7 +38,7 @@ const CustomSelect = ({
   const filteredGroups = useMemo(() => {
     if (!searchTerm.trim()) return groups;
     return groups.filter((group) =>
-      group.groupName.toLowerCase().includes(searchTerm.toLowerCase()),
+      group.groupName.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [groups, searchTerm]);
 
@@ -119,7 +92,7 @@ const CustomSelect = ({
       case "ArrowDown":
         e.preventDefault();
         setHighlightedIndex((prev) =>
-          prev < allOptions.length - 1 ? prev + 1 : prev,
+          prev < allOptions.length - 1 ? prev + 1 : prev
         );
         break;
       case "ArrowUp":
@@ -144,7 +117,6 @@ const CustomSelect = ({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Trigger Button/Input */}
       <div
         onClick={() => setIsOpen(!isOpen)}
         className="relative cursor-pointer"
@@ -155,7 +127,7 @@ const CustomSelect = ({
           placeholder={
             selectedGroupData ? selectedGroupData.groupName : placeholder
           }
-          className="w-full px-4 py-3 bg-white text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer placeholder:text-slate-400"
+          className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer placeholder:text-gray-400"
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -165,13 +137,12 @@ const CustomSelect = ({
           onFocus={() => setIsOpen(true)}
         />
         <ChevronDown
-          className={`absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-transform pointer-events-none ${
+          className={`absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 transition-transform pointer-events-none ${
             isOpen ? "rotate-180" : ""
           }`}
         />
       </div>
 
-      {/* Dropdown */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -181,36 +152,33 @@ const CustomSelect = ({
             transition={{ duration: 0.15 }}
             className={`absolute ${
               openUpward ? "bottom-full mb-2" : "top-full mt-2"
-            } w-full bg-white border border-slate-200 rounded-lg shadow-xl z-50 overflow-hidden`}
+            } w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden`}
           >
-            {/* Options List */}
             <div className="max-h-64 overflow-y-auto">
-              {/* None Option */}
               <motion.div
-                whileHover={{ backgroundColor: "#f8fafc" }}
+                whileHover={{ backgroundColor: "#f9fafb" }}
                 onClick={() => handleSelect("")}
                 onMouseEnter={() => setHighlightedIndex(0)}
-                className={`px-4 py-3 cursor-pointer transition-colors border-b border-slate-100 ${
+                className={`px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 ${
                   highlightedIndex === 0
-                    ? "bg-blue-50"
+                    ? "bg-indigo-50"
                     : !selectedGroup
-                      ? "bg-slate-50"
+                      ? "bg-gray-50"
                       : ""
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span
-                    className={`font-medium ${!selectedGroup ? "text-blue-600" : "text-slate-700"}`}
+                    className={`font-medium ${!selectedGroup ? "text-indigo-600" : "text-gray-700"}`}
                   >
                     Без группы
                   </span>
                   {!selectedGroup && (
-                    <Check className="w-4 h-4 text-blue-600" />
+                    <Check className="w-4 h-4 text-indigo-600" />
                   )}
                 </div>
               </motion.div>
 
-              {/* Group Options */}
               {filteredGroups.length > 0 ? (
                 filteredGroups.map((group, index) => {
                   const actualIndex = index + 1;
@@ -220,40 +188,40 @@ const CustomSelect = ({
                   return (
                     <motion.div
                       key={group._id}
-                      whileHover={{ backgroundColor: "#f8fafc" }}
+                      whileHover={{ backgroundColor: "#f9fafb" }}
                       onClick={() => handleSelect(group._id)}
                       onMouseEnter={() => setHighlightedIndex(actualIndex)}
-                      className={`px-4 py-3 cursor-pointer transition-colors border-b border-slate-100 last:border-b-0 ${
+                      className={`px-4 py-3 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0 ${
                         isHighlighted
-                          ? "bg-blue-50"
+                          ? "bg-indigo-50"
                           : isSelected
-                            ? "bg-slate-50"
+                            ? "bg-gray-50"
                             : ""
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
                           <div
-                            className={`font-medium ${isSelected ? "text-blue-600" : "text-slate-900"}`}
+                            className={`font-medium ${isSelected ? "text-indigo-600" : "text-gray-900"}`}
                           >
                             {group.groupName}
                           </div>
                           {group.students && (
-                            <div className="text-xs text-slate-500 mt-0.5">
+                            <div className="text-xs text-gray-500 mt-0.5">
                               {group.students.length} ta talaba
                             </div>
                           )}
                         </div>
                         {isSelected && (
-                          <Check className="w-4 h-4 text-blue-600" />
+                          <Check className="w-4 h-4 text-indigo-600" />
                         )}
                       </div>
                     </motion.div>
                   );
                 })
               ) : (
-                <div className="px-4 py-8 text-center text-slate-500">
-                  <Search className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                <div className="px-4 py-8 text-center text-gray-500">
+                  <Search className="w-8 h-8 mx-auto mb-2 text-gray-300" />
                   <p className="text-sm">Guruh topilmadi</p>
                 </div>
               )}
@@ -272,7 +240,7 @@ const Students = ({
   groups = [],
   onUpdateStudentGroup,
   onViewTests,
-  onAddStudent,
+  onDeleteStudent,
 }) => {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -280,7 +248,6 @@ const Students = ({
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Состояние для формы добавления студента
   const [newStudent, setNewStudent] = useState({
     username: "",
     email: "",
@@ -290,19 +257,12 @@ const Students = ({
     groupID: "",
   });
 
-  // Проверка онлайн статуса
   const isOnline = (studentId) => {
     return onlineStudents.some((s) => s._id === studentId || s === studentId);
   };
 
-  // Проверка решает ли студент тест
   const isInTest = (studentId) => {
     return studentsInTest.some((s) => s.studentId === studentId);
-  };
-
-  // Получить информацию о тесте
-  const getTestInfo = (studentId) => {
-    return studentsInTest.find((s) => s.studentId === studentId);
   };
 
   const filteredStudents = useMemo(() => {
@@ -312,8 +272,8 @@ const Students = ({
     if (q) {
       result = result.filter((s) =>
         [s.firstName, s.lastName, s.username, s.email].some((field) =>
-          field?.toLowerCase().includes(q),
-        ),
+          field?.toLowerCase().includes(q)
+        )
       );
     }
 
@@ -329,19 +289,16 @@ const Students = ({
   const onlineCount = students.filter((s) => isOnline(s._id)).length;
   const inTestCount = studentsInTest.length;
 
-  // Открыть модальное окно редактирования
   const handleEditClick = (student) => {
     setEditingStudent(student);
     setSelectedGroupId(student.groupID?._id || "");
   };
 
-  // Закрыть модальное окно редактирования
   const handleCloseModal = () => {
     setEditingStudent(null);
     setSelectedGroupId("");
   };
 
-  // Сохранить изменения группы
   const handleSave = async () => {
     if (onUpdateStudentGroup && editingStudent) {
       await onUpdateStudentGroup(editingStudent._id, selectedGroupId);
@@ -349,7 +306,6 @@ const Students = ({
     }
   };
 
-  // Открыть модальное окно добавления студента
   const handleOpenAddModal = () => {
     setShowAddModal(true);
     setNewStudent({
@@ -362,7 +318,6 @@ const Students = ({
     });
   };
 
-  // Закрыть модальное окно добавления студента
   const handleCloseAddModal = () => {
     setShowAddModal(false);
     setNewStudent({
@@ -375,7 +330,6 @@ const Students = ({
     });
   };
 
-  // Обработка изменения полей формы
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewStudent((prev) => ({
@@ -384,22 +338,21 @@ const Students = ({
     }));
   };
 
-  // Добавить нового студента
   const handleAddStudent = async () => {
     try {
       const req = await axios.post(
         import.meta.env.VITE_BACKEND_API + "/api/auth/register",
-        newStudent,
+        newStudent
       );
       console.log(newStudent);
       const data = await req.data;
       console.log(data);
+      handleCloseAddModal();
     } catch (err) {
       console.log(err.response.data);
     }
   };
 
-  // Проверка валидности формы
   const isFormValid = () => {
     return (
       newStudent.username.trim() !== "" &&
@@ -410,10 +363,15 @@ const Students = ({
     );
   };
 
-  // Просмотр тестов студента
   const handleViewTests = (studentId) => {
     if (onViewTests) {
       onViewTests(studentId);
+    }
+  };
+
+  const handleDelete = (student) => {
+    if (onDeleteStudent) {
+      onDeleteStudent(student);
     }
   };
 
@@ -426,37 +384,35 @@ const Students = ({
       transition={{ duration: 0.2 }}
       className="w-[87%]"
     >
-      <div className="ml-64 min-h-screen bg-slate-50 w-full">
+      <div className="ml-64 min-h-screen bg-gray-50 w-full">
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm px-6 py-4 mb-6 mt-17.5">
+        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm px-6 py-4 mb-6 mt-17.5">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-black text-slate-900">Студенты</h1>
-              <p className="text-xs text-slate-500 mt-1">
+              <h1 className="text-2xl font-bold text-gray-900">Студенты</h1>
+              <p className="text-sm text-gray-500 mt-1">
                 Список студентов и их уровень подготовки
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Search */}
               <div className="relative w-full max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Поиск по имени, email, username"
-                  className="input input-bordered w-full pl-9 bg-white border-slate-200 focus:border-slate-400"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-sm"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
 
-              {/* Add Student Button */}
               <button
                 onClick={handleOpenAddModal}
-                className="btn btn-primary gap-2 shadow-lg whitespace-nowrap"
+                className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-sm shadow-sm transition-colors whitespace-nowrap flex items-center gap-2"
               >
                 <UserPlus className="w-4 h-4" />
-                Yangi Guruh
+                Yangi Talaba
               </button>
             </div>
           </div>
@@ -465,20 +421,32 @@ const Students = ({
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => setFilterStatus("all")}
-              className={`btn btn-sm ${filterStatus === "all" ? "btn-primary" : "btn-ghost"}`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filterStatus === "all"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+              }`}
             >
               Все ({students.length})
             </button>
             <button
               onClick={() => setFilterStatus("online")}
-              className={`btn btn-sm ${filterStatus === "online" ? "btn-success" : "btn-ghost"} gap-2`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                filterStatus === "online"
+                  ? "bg-green-600 text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+              }`}
             >
               <Circle className="w-3 h-3 fill-green-500 text-green-500" />
               Онлайн ({onlineCount})
             </button>
             <button
               onClick={() => setFilterStatus("inTest")}
-              className={`btn btn-sm ${filterStatus === "inTest" ? "btn-warning" : "btn-ghost"} gap-2`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                filterStatus === "inTest"
+                  ? "bg-orange-600 text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+              }`}
             >
               <FileText className="w-3 h-3" />
               Решают тест ({inTestCount})
@@ -488,65 +456,15 @@ const Students = ({
 
         {/* Content */}
         <div className="px-6 pb-10">
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <div className="stats shadow-lg border border-slate-200 bg-slate-700 text-white">
-              <div className="stat">
-                <div className="stat-figure">
-                  <Users className="w-8 h-8" />
-                </div>
-                <div className="stat-title text-slate-300">Всего студентов</div>
-                <div className="stat-value">{students.length}</div>
-              </div>
-            </div>
+          {/* Stats Component */}
+          <StudentStats
+            students={students}
+            onlineCount={onlineCount}
+            inTestCount={inTestCount}
+            filteredCount={filteredStudents.length}
+          />
 
-            <div className="stats shadow-lg border border-slate-200 bg-green-600 text-white">
-              <div className="stat">
-                <div className="stat-figure">
-                  <Circle className="w-8 h-8 fill-white" />
-                </div>
-                <div className="stat-title text-green-100">Онлайн</div>
-                <div className="stat-value">{onlineCount}</div>
-              </div>
-            </div>
-
-            <div className="stats shadow-lg border border-slate-200 bg-orange-500 text-white">
-              <div className="stat">
-                <div className="stat-figure">
-                  <FileText className="w-8 h-8" />
-                </div>
-                <div className="stat-title text-orange-100">Решают тест</div>
-                <div className="stat-value">{inTestCount}</div>
-              </div>
-            </div>
-
-            <div className="stats shadow-lg border border-slate-200 bg-slate-500 text-white">
-              <div className="stat">
-                <div className="stat-figure">
-                  <TrendingUp className="w-8 h-8" />
-                </div>
-                <div className="stat-title text-slate-300">Senior+</div>
-                <div className="stat-value">
-                  {
-                    students.filter((s) =>
-                      ["strongMiddle", "senior"].includes(s.grade),
-                    ).length
-                  }
-                </div>
-              </div>
-            </div>
-
-            <div className="stats shadow-lg border border-slate-200 bg-slate-400 text-white">
-              <div className="stat">
-                <div className="stat-figure">
-                  <User className="w-8 h-8" />
-                </div>
-                <div className="stat-title text-slate-700">Найдено</div>
-                <div className="stat-value">{filteredStudents.length}</div>
-              </div>
-            </div>
-          </div>
-
+          {/* Add Student Modal */}
           {showAddModal && (
             <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
               <motion.div
@@ -556,56 +474,53 @@ const Students = ({
                 transition={{ duration: 0.2 }}
                 className="bg-white rounded-xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col"
               >
-                {/* Modal Header - Минималистичный */}
-                <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-indigo-600 to-indigo-700">
                   <div>
-                    <h2 className="text-xl font-bold text-slate-900">
+                    <h2 className="text-xl font-bold text-white">
                       Yangi Talaba Qo'shish
                     </h2>
-                    <p className="text-sm text-slate-500 mt-0.5">
+                    <p className="text-sm text-indigo-100 mt-0.5">
                       Barcha kerakli ma'lumotlarni to'ldiring
                     </p>
                   </div>
                   <button
                     onClick={handleCloseAddModal}
-                    className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors"
+                    className="w-9 h-9 rounded-lg hover:bg-white/20 flex items-center justify-center transition-colors"
                   >
-                    <X className="w-5 h-5 text-slate-400" />
+                    <X className="w-5 h-5 text-white" />
                   </button>
                 </div>
 
-                {/* Modal Body */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                  {/* Personal Information */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">
+                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
                       Shaxsiy Ma'lumotlar
                     </h3>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-sm font-medium text-gray-700">
                           Ism <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
                           name="firstName"
                           placeholder="Ismni kiriting"
-                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-sm"
                           value={newStudent.firstName}
                           onChange={handleInputChange}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-sm font-medium text-gray-700">
                           Familiya <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
                           name="lastName"
                           placeholder="Familiyani kiriting"
-                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-sm"
                           value={newStudent.lastName}
                           onChange={handleInputChange}
                         />
@@ -613,68 +528,66 @@ const Students = ({
                     </div>
                   </div>
 
-                  {/* Account Information */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">
+                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
                       Akkaunt Ma'lumotlari
                     </h3>
 
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-sm font-medium text-gray-700">
                           Username <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
                           name="username"
                           placeholder="Username kiriting"
-                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-sm"
                           value={newStudent.username}
                           onChange={handleInputChange}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-sm font-medium text-gray-700">
                           Email <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="email"
                           name="email"
                           placeholder="email@example.com"
-                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-sm"
                           value={newStudent.email}
                           onChange={handleInputChange}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">
+                        <label className="text-sm font-medium text-gray-700">
                           Parol <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="password"
                           name="password"
                           placeholder="Parolni kiriting"
-                          className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all text-sm"
+                          className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-sm"
                           value={newStudent.password}
                           onChange={handleInputChange}
                         />
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-gray-500">
                           Kamida 6 ta belgi
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Group Selection */}
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">
+                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
                       Guruh
                     </h3>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-700">
+                      <label className="text-sm font-medium text-gray-700">
                         Guruhni tanlang
                       </label>
                       <CustomSelect
@@ -693,18 +606,17 @@ const Students = ({
                   </div>
                 </div>
 
-                {/* Modal Footer */}
-                <div className="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50">
                   <button
                     onClick={handleCloseAddModal}
-                    className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     Bekor qilish
                   </button>
                   <button
                     onClick={handleAddStudent}
                     disabled={!isFormValid()}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
                   >
                     <UserPlus className="w-4 h-4" />
                     Qo'shish
@@ -714,152 +626,15 @@ const Students = ({
             </div>
           )}
 
-          {/* Table */}
-          <div className="card bg-base-100 shadow-lg border border-slate-200">
-            <div className="overflow-x-auto">
-              <table className="table table-zebra">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="text-xs font-bold text-slate-600 uppercase w-16">
-                      Действия
-                    </th>
-                    <th className="text-xs font-bold text-slate-600 uppercase">
-                      Студент
-                    </th>
-                    <th className="text-xs font-bold text-slate-600 uppercase">
-                      Email
-                    </th>
-                    <th className="text-xs font-bold text-slate-600 uppercase">
-                      Статус
-                    </th>
-                    <th className="text-xs font-bold text-slate-600 uppercase">
-                      Уровень
-                    </th>
-                    <th className="text-xs font-bold text-slate-600 uppercase">
-                      Опыт
-                    </th>
-                    <th className="text-xs font-bold text-slate-600 uppercase">
-                      Группа
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredStudents.map((student) => {
-                    const online = isOnline(student._id);
-                    const inTest = isInTest(student._id);
-                    const testInfo = getTestInfo(student._id);
-
-                    return (
-                      <tr key={student._id} className="hover">
-                        <td>
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => handleEditClick(student)}
-                              className="btn btn-ghost btn-xs text-blue-600 hover:bg-blue-50 hover:text-blue-700"
-                              title="Изменить группу"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleViewTests(student._id)}
-                              className="btn btn-ghost btn-xs text-purple-600 hover:bg-purple-50 hover:text-purple-700"
-                              title="Просмотр тестов"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-
-                        <td>
-                          <div className="flex items-center gap-3">
-                            <div className="avatar">
-                              <div className="relative w-10 h-10 rounded-lg ring-2 ring-slate-200">
-                                <img src={student.avatar} alt="" />
-                                {online && (
-                                  <Circle className="absolute -bottom-1 -right-1 w-4 h-4 fill-green-500 text-green-500 border-2 border-white rounded-full" />
-                                )}
-                              </div>
-                            </div>
-                            <div>
-                              <div className="font-bold text-slate-900">
-                                {student.firstName} {student.lastName}
-                              </div>
-                              <div className="text-xs text-slate-500">
-                                @{student.username}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td>
-                          <div className="flex items-center gap-2 text-sm text-slate-600">
-                            <Mail className="w-4 h-4 text-slate-400" />
-                            {student.email}
-                          </div>
-                        </td>
-
-                        <td>
-                          <div className="flex flex-col gap-1">
-                            {online && (
-                              <span className="badge badge-success badge-sm gap-1">
-                                <Circle className="w-2 h-2 fill-white" />
-                                Онлайн
-                              </span>
-                            )}
-                            {inTest && testInfo && (
-                              <div className="badge badge-warning badge-sm gap-1">
-                                <FileText className="w-3 h-3" />
-                                <span className="text-xs">
-                                  {testInfo.testTitle || "Решает тест"}
-                                </span>
-                              </div>
-                            )}
-                            {!online && !inTest && (
-                              <span className="badge badge-ghost badge-sm text-slate-400">
-                                Офлайн
-                              </span>
-                            )}
-                          </div>
-                        </td>
-
-                        <td>
-                          <span
-                            className={`badge badge-sm ${gradeColors[student.grade]}`}
-                          >
-                            {gradeLabels[student.grade]}
-                          </span>
-                        </td>
-
-                        <td>
-                          <span className="text-sm font-semibold text-slate-700">
-                            {student.gradeExperience} мес.
-                          </span>
-                        </td>
-
-                        <td>
-                          {student.groupID ? (
-                            <span className="badge badge-outline badge-sm">
-                              {student.groupID.groupName}
-                            </span>
-                          ) : (
-                            <span className="badge badge-ghost badge-sm text-slate-400">
-                              Без группы
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-
-              {filteredStudents.length === 0 && (
-                <div className="text-center py-10 text-slate-500">
-                  Ничего не найдено
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Student Table Component */}
+          <StudentTable
+            filteredStudents={filteredStudents}
+            onlineStudents={onlineStudents}
+            studentsInTest={studentsInTest}
+            onEditClick={handleEditClick}
+            onViewTests={handleViewTests}
+            handleDelete={handleDelete}
+          />
         </div>
 
         {/* Edit Group Modal */}

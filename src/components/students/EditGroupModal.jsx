@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import { X, Save, Layers, Circle } from "lucide-react";
 
 const gradeColors = {
-  junior: "bg-slate-200 text-slate-700",
-  strongJunior: "bg-slate-300 text-slate-800",
-  middle: "bg-slate-400 text-slate-900",
-  strongMiddle: "bg-slate-500 text-white",
-  senior: "bg-slate-600 text-white",
+  junior: "bg-blue-50 text-blue-700 border border-blue-200",
+  strongJunior: "bg-blue-100 text-blue-800 border border-blue-300",
+  middle: "bg-indigo-100 text-indigo-800 border border-indigo-300",
+  strongMiddle: "bg-purple-100 text-purple-800 border border-purple-300",
+  senior: "bg-purple-200 text-purple-900 border border-purple-400",
 };
 
 const gradeLabels = {
@@ -33,55 +33,68 @@ const EditGroupModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+      >
         {/* Modal Header */}
-        <div className="bg-linear-to-r from-blue-600 to-blue-700 text-white px-6 py-5 rounded-t-2xl flex items-center justify-between">
+        <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-              <Layers className="w-6 h-6" />
+              <Layers className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Изменить группу</h2>
-              <p className="text-blue-100 text-sm">
+              <h2 className="text-xl font-bold text-white">Изменить группу</h2>
+              <p className="text-indigo-100 text-sm mt-0.5">
                 {editingStudent.firstName} {editingStudent.lastName}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="btn btn-ghost btn-sm btn-circle text-white hover:bg-white/20"
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-white hover:bg-white/20 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-5">
           {/* Student Info Card */}
-          <div className="bg-linear-to-br from-slate-50 to-blue-50 rounded-xl p-4 border border-blue-100">
+          <div className="bg-gradient-to-br from-gray-50 to-indigo-50 rounded-xl p-4 border border-gray-200">
             <div className="flex items-center gap-4">
-              <div className="avatar">
-                <div className="w-16 h-16 rounded-xl ring-2 ring-blue-200">
-                  <img src={editingStudent.avatar} alt="" />
+              <div className="relative">
+                <div className="w-16 h-16 rounded-xl overflow-hidden ring-2 ring-indigo-200">
+                  <img
+                    src={editingStudent.avatar}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
                 </div>
+                {isOnline(editingStudent._id) && (
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                )}
               </div>
               <div className="flex-1">
-                <div className="font-bold text-slate-900 text-lg">
+                <div className="font-bold text-gray-900 text-lg">
                   {editingStudent.firstName} {editingStudent.lastName}
                 </div>
-                <div className="text-sm text-slate-600 mt-1">
+                <div className="text-sm text-gray-600 mt-1">
                   @{editingStudent.username}
                 </div>
                 <div className="flex gap-2 mt-2">
                   <span
-                    className={`badge badge-sm ${gradeColors[editingStudent.grade]}`}
+                    className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${gradeColors[editingStudent.grade]}`}
                   >
                     {gradeLabels[editingStudent.grade]}
                   </span>
                   {isOnline(editingStudent._id) && (
-                    <span className="badge badge-success badge-sm gap-1">
-                      <Circle className="w-2 h-2 fill-white" />
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                      <Circle className="w-2 h-2 fill-green-500" />
                       Онлайн
                     </span>
                   )}
@@ -91,18 +104,22 @@ const EditGroupModal = ({
           </div>
 
           {/* Current Group Info */}
-          <div className="bg-slate-50 rounded-xl p-4">
-            <div className="text-sm text-slate-600 mb-2">Текущая группа:</div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Текущая группа:
+            </label>
             {editingStudent.groupID ? (
-              <div className="flex items-center gap-2 p-3 bg-white rounded-lg border border-slate-200">
-                <Layers className="w-5 h-5 text-blue-600" />
-                <span className="font-semibold text-slate-900">
+              <div className="flex items-center gap-3 p-3.5 bg-white rounded-lg border border-gray-200">
+                <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+                  <Layers className="w-5 h-5 text-indigo-600" />
+                </div>
+                <span className="font-semibold text-gray-900">
                   {editingStudent.groupID.groupName}
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-2 p-3 bg-white rounded-lg border border-slate-200">
-                <span className="text-slate-500 italic">
+              <div className="flex items-center gap-3 p-3.5 bg-gray-50 rounded-lg border border-gray-200">
+                <span className="text-gray-500 italic">
                   Студент не состоит в группе
                 </span>
               </div>
@@ -110,14 +127,12 @@ const EditGroupModal = ({
           </div>
 
           {/* Group Selection */}
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text font-bold text-slate-700 text-base">
-                Выберите новую группу
-              </span>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Выберите новую группу
             </label>
             <select
-              className="select select-bordered bg-white border-2 focus:border-blue-500 text-base"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-sm font-medium text-gray-900"
               value={selectedGroupId}
               onChange={(e) => onGroupChange(e.target.value)}
             >
@@ -131,17 +146,18 @@ const EditGroupModal = ({
           </div>
 
           {/* Info Alert */}
-          <div className="alert alert-info bg-blue-50 border-blue-200">
+          <div className="flex gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              className="stroke-blue-600 shrink-0 w-6 h-6"
+              className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
+                stroke="currentColor"
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               ></path>
             </svg>
@@ -153,17 +169,22 @@ const EditGroupModal = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="bg-slate-50 px-6 py-4 rounded-b-2xl border-t border-slate-200 flex justify-end gap-3">
-          <button onClick={onClose} className="btn btn-ghost gap-2">
-            <X className="w-4 h-4" />
+        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
             Bekor qilish
           </button>
-          <button onClick={onSave} className="btn btn-primary gap-2 shadow-lg">
+          <button
+            onClick={onSave}
+            className="px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm flex items-center gap-2"
+          >
             <Save className="w-4 h-4" />
             Saqlash
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
