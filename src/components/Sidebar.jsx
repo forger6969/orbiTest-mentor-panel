@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home,
@@ -15,6 +16,7 @@ import {
 import logo from "../assets/darklogo.svg";
 
 const Sidebar = ({ user }) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState({
@@ -124,7 +126,9 @@ const Sidebar = ({ user }) => {
                     : "text-slate-500 group-hover:text-slate-700"
                 }`}
               />
-              <span className="text-[14px] font-medium">Home</span>
+              <span className="text-[14px] font-medium">
+                {t("common.home")}
+              </span>
             </div>
             <ChevronDown
               onClick={(e) => toggleExpand("home", e)}
@@ -150,7 +154,7 @@ const Sidebar = ({ user }) => {
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
-                Dashboard
+                {t("sidebar.dashboard")}
               </Link>
               <Link
                 to="/dashboard/analytics"
@@ -160,7 +164,7 @@ const Sidebar = ({ user }) => {
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
-                Analytics
+                {t("sidebar.analytics")}
               </Link>
               <Link
                 to="/dashboard/notifications"
@@ -170,7 +174,7 @@ const Sidebar = ({ user }) => {
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                 }`}
               >
-                Notifications
+                {t("notifications.title")}
               </Link>
             </div>
           )}
@@ -194,7 +198,9 @@ const Sidebar = ({ user }) => {
                     : "text-slate-500 group-hover:text-slate-700"
                 }`}
               />
-              <span className="text-[14px] font-medium">Groups</span>
+              <span className="text-[14px] font-medium">
+                {t("common.groups")}
+              </span>
             </div>
             <ChevronDown
               onClick={(e) => toggleExpand("groups", e)}
@@ -261,7 +267,9 @@ const Sidebar = ({ user }) => {
                     : "text-slate-500 group-hover:text-slate-700"
                 }`}
               />
-              <span className="text-[14px] font-medium">Students</span>
+              <span className="text-[14px] font-medium">
+                {t("common.students")}
+              </span>
             </div>
             <ChevronDown
               onClick={(e) => toggleExpand("students", e)}
@@ -338,7 +346,9 @@ const Sidebar = ({ user }) => {
                     : "text-slate-500 group-hover:text-slate-700"
                 }`}
               />
-              <span className="text-[14px] font-medium">Exams</span>
+              <span className="text-[14px] font-medium">
+                {t("common.exams")}
+              </span>
             </div>
             <ChevronDown
               onClick={(e) => toggleExpand("exams", e)}

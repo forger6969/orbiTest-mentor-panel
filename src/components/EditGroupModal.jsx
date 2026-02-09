@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const EditGroupModal = ({ setModalType, group, onSubmit, reload }) => {
   const [form, setForm] = useState({

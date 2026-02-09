@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Bar } from "react-chartjs-2";
 import { Award } from "lucide-react";
 

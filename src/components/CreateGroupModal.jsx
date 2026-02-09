@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import axios from "axios";
 
@@ -46,7 +47,7 @@ const CreateGroupModal = ({ isOpen, onClose, onSuccess, reload }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = response.data;

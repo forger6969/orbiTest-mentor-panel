@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
@@ -63,7 +64,7 @@ const GroupDetails = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       console.log(req.data);
       setGroup(req.data.group);
@@ -96,7 +97,7 @@ const GroupDetails = () => {
   const handleDeleteGroup = async () => {
     if (
       window.confirm(
-        `Вы уверены, что хотите удалить группу "${group.groupName}"?`
+        `Вы уверены, что хотите удалить группу "${group.groupName}"?`,
       )
     ) {
       try {
@@ -107,7 +108,7 @@ const GroupDetails = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         toast.success("Группа успешно удалена");
         navigate("/dashboard/groups");

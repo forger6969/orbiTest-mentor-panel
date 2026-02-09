@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Users, User, TrendingUp, MessageCircle } from "lucide-react";
 
 const GroupStats = ({ groups }) => {

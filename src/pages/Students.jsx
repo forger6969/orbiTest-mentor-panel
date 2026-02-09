@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Users,
   Search,
@@ -64,7 +65,7 @@ const CustomSelect = ({
   const filteredGroups = useMemo(() => {
     if (!searchTerm.trim()) return groups;
     return groups.filter((group) =>
-      group.groupName.toLowerCase().includes(searchTerm.toLowerCase())
+      group.groupName.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [groups, searchTerm]);
 
@@ -118,7 +119,7 @@ const CustomSelect = ({
       case "ArrowDown":
         e.preventDefault();
         setHighlightedIndex((prev) =>
-          prev < allOptions.length - 1 ? prev + 1 : prev
+          prev < allOptions.length - 1 ? prev + 1 : prev,
         );
         break;
       case "ArrowUp":
@@ -311,8 +312,8 @@ const Students = ({
     if (q) {
       result = result.filter((s) =>
         [s.firstName, s.lastName, s.username, s.email].some((field) =>
-          field?.toLowerCase().includes(q)
-        )
+          field?.toLowerCase().includes(q),
+        ),
       );
     }
 
@@ -388,7 +389,7 @@ const Students = ({
     try {
       const req = await axios.post(
         import.meta.env.VITE_BACKEND_API + "/api/auth/register",
-        newStudent
+        newStudent,
       );
       console.log(newStudent);
       const data = await req.data;
@@ -528,7 +529,7 @@ const Students = ({
                 <div className="stat-value">
                   {
                     students.filter((s) =>
-                      ["strongMiddle", "senior"].includes(s.grade)
+                      ["strongMiddle", "senior"].includes(s.grade),
                     ).length
                   }
                 </div>

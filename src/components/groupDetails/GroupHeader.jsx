@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, Edit2, Trash2 } from "lucide-react";
 
 const GroupHeader = ({ group, onBack, onDelete }) => {

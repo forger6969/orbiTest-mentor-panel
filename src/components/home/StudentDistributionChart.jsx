@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Doughnut } from "react-chartjs-2";
 import { Users } from "lucide-react";
 

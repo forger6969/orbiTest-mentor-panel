@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import WelcomeSplash from "../components/WelcomeSplash";
 import axios from "axios";
 import Home from "./Home";
@@ -34,7 +35,7 @@ const Dashboard = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       console.log(req.data);
       setUser(req.data);
@@ -72,7 +73,7 @@ const Dashboard = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const res = await req.data;
       console.log(res);

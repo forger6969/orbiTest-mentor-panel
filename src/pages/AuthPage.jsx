@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Squares from "../components/Squares";
 import BlurText from "../components/BlurText";
 import whitelogo from "../assets/whitelogo.svg";
@@ -7,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { showToast } from "../components/AppToast";
 const AuthPage = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isAuth, setAuth] = useState(false);
@@ -27,7 +29,7 @@ const AuthPage = () => {
       setLoader(true);
       const req = await axios.post(
         import.meta.env.VITE_BACKEND_API + "/api/mentor/login",
-        { email, password }
+        { email, password },
       );
 
       const data = req.data;
@@ -39,7 +41,7 @@ const AuthPage = () => {
       console.log(err);
       showToast({
         type: "error",
-        message: "Email yoki parol noto‘g‘ri",
+        message: t("auth.invalidCredentials"),
       });
     } finally {
       setLoader(false);
@@ -83,7 +85,9 @@ const AuthPage = () => {
 
         {/* Форма логина */}
         <div className="bg-white rounded-2xl max-w-3xl w-full p-6 md:p-8 shadow-2xl relative">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Kirish</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            {t("auth.login")}
+          </h2>
 
           {isLoader && (
             <div className="bg-black/40 backdrop-blur-xs absolute inset-0 z-10 rounded-2xl flex items-center justify-center">
@@ -93,18 +97,22 @@ const AuthPage = () => {
 
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Email</label>
+              <label className="text-sm font-medium text-gray-700">
+                {t("auth.email")}
+              </label>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t("auth.emailPlaceholder")}
                 className="rounded-lg border border-gray-300 px-4 py-2 text-gray-900 outline-none transition focus:border-black focus:ring-1 focus:ring-black"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Parol</label>
+              <label className="text-sm font-medium text-gray-700">
+                {t("auth.password")}
+              </label>
               <input
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -127,7 +135,7 @@ const AuthPage = () => {
                 }
               `}
             >
-              Kirish
+              {t("auth.signIn")}
             </button>
           </form>
         </div>

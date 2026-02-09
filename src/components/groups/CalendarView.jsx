@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Clock, Users, MoreVertical, Edit2, Copy, Eye } from "lucide-react";
 import ContextMenu from "../ContextMenu";

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Calendar,
   Table,
@@ -44,6 +45,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
   const [modalType, setModalType] = useState("");
   const [modalData, setModalData] = useState(null);
   const navigate = useNavigate();
+  const {t} = useTranslation()
 
   const gradeColors = {
     junior: "bg-slate-200 text-slate-700",
@@ -128,7 +130,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
     console.log("Удаление группы:", group);
     if (
       window.confirm(
-        `Вы уверены, что хотите удалить группу "${group.groupName}"?`
+        `Вы уверены, что хотите удалить группу "${group.groupName}"?`,
       )
     ) {
       toast.success(`Группа "${group.groupName}" удалена`);
@@ -147,7 +149,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
           headers: {
             authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = await req.data;
@@ -335,10 +337,10 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                Группы
+                {t("common.groups")}
               </h1>
               <p className="text-xs text-slate-500 mt-1">
-                Управление учебными группами и расписанием
+                {t("groups.description")}
               </p>
             </div>
 
@@ -349,7 +351,7 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
                 className="bg-indigo-600 px-5 flex items-center py-2 rounded-sm text-white gap-2 shadow-lg hover:shadow-xl hover:scale-105 transition-all"
               >
                 <Plus className="w-5 h-5" />
-                Yangi Guruh
+                {t("groups.createGroup")}
               </button>
 
               {/* View Mode Selector */}
@@ -369,9 +371,9 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
                       <LayoutGrid className="w-4 h-4 text-slate-600" />
                     )}
                     <span className="text-sm font-semibold text-slate-900">
-                      {viewMode === "calendar" && "Календарь"}
-                      {viewMode === "table" && "Таблица"}
-                      {viewMode === "cards" && "Карточки"}
+                      {viewMode === "calendar" && t("groups.calendarView")}
+                      {viewMode === "table" && t("groups.tableView")}
+                      {viewMode === "cards" && t("groups.cardsView")}
                     </span>
                   </div>
                   <ChevronDown className="w-4 h-4 text-slate-400" />

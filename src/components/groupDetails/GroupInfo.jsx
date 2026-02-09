@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Clock, Calendar, MessageCircle, Mail, User } from "lucide-react";
 
 const GroupInfo = ({ group }) => {

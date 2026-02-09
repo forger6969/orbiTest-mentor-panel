@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Users,
   UserCheck,
@@ -41,11 +42,12 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 const Home = ({ groups = [], students = [], exams = [] }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   // Статические данные для демонстрации (если пропсы пусты)
   const mockGroups = [
     {
@@ -137,7 +139,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
   const stats = useMemo(() => {
     const totalStudents = actualStudents.length;
     const activeGroups = actualGroups.filter(
-      (g) => g.students && g.students.length > 0
+      (g) => g.students && g.students.length > 0,
     ).length;
 
     // Экзамены сегодня
@@ -152,7 +154,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
     });
 
     const completedToday = todayExams.filter(
-      (e) => e.status === "completed"
+      (e) => e.status === "completed",
     ).length;
 
     return {
@@ -295,28 +297,28 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
   // Данные карточек статистики
   const statsCards = [
     {
-      title: "Всего групп",
+      title: t("home.summGroups"),
       value: actualGroups.length.toString(),
       icon: Users,
       bgColor: "bg-slate-600",
       textColor: "text-white",
     },
     {
-      title: "Студентов",
+      title: t("home.studentsCount"),
       value: stats.totalStudents.toLocaleString(),
       icon: UserCheck,
       bgColor: "bg-slate-500",
       textColor: "text-white",
     },
     {
-      title: "Средняя производительность",
+      title: t("home.averagePerfomance"),
       value: "0%",
       icon: TrendingUp,
       bgColor: "bg-slate-400",
       textColor: "text-white",
     },
     {
-      title: "Telegram-групп",
+      title: t("home.telegramCount"),
       value: "0",
       icon: MessageCircle,
       bgColor: "bg-slate-300",
@@ -392,13 +394,13 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-lg font-semibold text-slate-700">
-              Активные группы
+              {t("home.activeGroups")}
             </h2>
             <button
               onClick={() => navigate(`/dashboard/groups`)}
               className="text-sm text-slate-500 hover:text-slate-700 transition-colors"
             >
-              Посмотреть все →
+              {t("home.seeAll")} →
             </button>
           </div>
 

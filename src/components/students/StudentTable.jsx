@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Edit3, Eye, Mail, Circle, FileText, Layers } from "lucide-react";
 
 const gradeColors = {

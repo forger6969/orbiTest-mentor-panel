@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const CreateGroupForm = ({
   formData,
@@ -7,16 +8,15 @@ const CreateGroupForm = ({
   onSubmit,
   onChange,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="max-w-4xl mx-auto">
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-base-content mb-2">
-          Yangi Guruh Yaratish
+          {t("createGroup.title")}
         </h1>
-        <p className="text-base-content/60">
-          Yangi o'quv guruhini ro'yxatdan o'tkazing
-        </p>
+        <p className="text-base-content/60">{t("createGroup.subtitle")}</p>
       </div>
 
       {/* Alert Messages */}
@@ -58,7 +58,8 @@ const CreateGroupForm = ({
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-base font-semibold">
-                  Guruh nomi <span className="text-error">*</span>
+                  {t("createGroup.groupName")}{" "}
+                  <span className="text-error">*</span>
                 </span>
               </label>
               <input
@@ -66,7 +67,7 @@ const CreateGroupForm = ({
                 name="groupName"
                 value={formData.groupName}
                 onChange={onChange}
-                placeholder="Masalan: Frontend N12"
+                placeholder={t("createGroup.groupName")}
                 className="input input-bordered w-full focus:input-primary"
                 required
               />
@@ -76,14 +77,15 @@ const CreateGroupForm = ({
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-base font-semibold">
-                  Guruh tavsifi <span className="text-error">*</span>
+                  {t("createGroup.description")}{" "}
+                  <span className="text-error">*</span>
                 </span>
               </label>
               <textarea
                 name="groupDescribe"
                 value={formData.groupDescribe}
                 onChange={onChange}
-                placeholder="Guruh haqida qisqacha ma'lumot yozing..."
+                placeholder={t("createGroup.description")}
                 className="textarea textarea-bordered h-32 focus:textarea-primary"
                 required
               />
@@ -95,7 +97,8 @@ const CreateGroupForm = ({
               <div className="form-control">
                 <label className="label">
                   <span className="label-text text-base font-semibold">
-                    Dars kunlari <span className="text-error">*</span>
+                    {t("createGroup.selectDay")}{" "}
+                    <span className="text-error">*</span>
                   </span>
                 </label>
                 <select
@@ -142,7 +145,7 @@ const CreateGroupForm = ({
                 className={`btn btn-primary btn-lg w-full md:w-auto ${loading ? "loading" : ""}`}
               >
                 {loading ? (
-                  "Yuklanmoqda..."
+                  t("createGroup.creatingGroup")
                 ) : (
                   <>
                     <svg
@@ -159,7 +162,7 @@ const CreateGroupForm = ({
                         d="M12 4v16m8-8H4"
                       />
                     </svg>
-                    Guruh yaratish
+                    {t("createGroup.create")}
                   </>
                 )}
               </button>

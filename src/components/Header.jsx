@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "../language/init.js";
 import {
   Bell,
   Search,
@@ -26,13 +28,16 @@ const Header = ({
   onDeleteNotification,
   reload,
 }) => {
+  const { t, i18n } = useTranslation();
   const [openNotif, setOpenNotif] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
+  const [openLanguage, setOpenLanguage] = useState(false);
   const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
 
   const notifRef = useRef(null);
   const profileRef = useRef(null);
+  const languageRef = useRef(null);
 
   const unreadCount = notifications.filter((n) => n.status !== "viewed").length;
 
@@ -52,6 +57,9 @@ const Header = ({
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setOpenProfile(false);
       }
+      if (languageRef.current && !languageRef.current.contains(event.target)) {
+        setOpenLanguage(false);
+      }
     };
 
     // Закрытие при нажатии ESC
@@ -59,6 +67,7 @@ const Header = ({
       if (event.key === "Escape") {
         setOpenNotif(false);
         setOpenProfile(false);
+        setOpenLanguage(false);
       }
     };
 
@@ -157,6 +166,48 @@ const Header = ({
 
       {/* RIGHT */}
       <div className="flex items-center gap-5">
+        {/* Language Selector */}
+        <div className="relative" ref={languageRef}>
+          <button
+            onClick={() => setOpenLanguage(!openLanguage)}
+            className="px-3 py-2 rounded-lg hover:bg-slate-100 transition text-sm font-medium text-slate-700 flex items-center gap-2"
+          >
+            {i18n.language === "ru" ? "🇷🇺 РУ" : "🇺🇿 UZ"}
+            <ChevronDown className="w-4 h-4" />
+          </button>
+
+          {openLanguage && (
+            <div className="absolute right-0 mt-2 w-32 bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden">
+              <button
+                onClick={() => {
+                  i18n.changeLanguage("ru");
+                  setOpenLanguage(false);
+                }}
+                className={`w-full text-left px-4 py-2 hover:bg-slate-100 transition ${
+                  i18n.language === "ru"
+                    ? "bg-indigo-50 font-medium text-indigo-600"
+                    : "text-slate-700"
+                }`}
+              >
+                🇷🇺 Русский
+              </button>
+              <button
+                onClick={() => {
+                  i18n.changeLanguage("uz");
+                  setOpenLanguage(false);
+                }}
+                className={`w-full text-left px-4 py-2 hover:bg-slate-100 transition ${
+                  i18n.language === "uz"
+                    ? "bg-indigo-50 font-medium text-indigo-600"
+                    : "text-slate-700"
+                }`}
+              >
+                🇺🇿 O'zbekcha
+              </button>
+            </div>
+          )}
+        </div>
+
         <button onClick={reload}>
           <RotateCcw />
         </button>
