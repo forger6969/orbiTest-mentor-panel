@@ -34,7 +34,15 @@
     "invalidCredentials": "Email yoki parol noto'g'ri",
     "minPasswordLength": "Parol kamida 6 ta belgi bo'lishi kerak",
     "enterValidEmail": "To'g'ri emailni kiriting",
-    "signIn": "Kirish"
+    "signIn": "Kirish",
+    "signingIn": "Kirilmoqda...",
+    "continueWithGoogle": "Google orqali kirish",
+    "or": "YOKI",
+    "googleAuthError": "Google orqali kirish xatosi",
+    "googleAuthSuccess": "Google orqali muvaffaqiyatli kirildi",
+    "tokenNotReceived": "Token olinmadi",
+    "authenticating": "Autentifikatsiya...",
+    "pleaseWait": "Iltimos kuting"
   },
   "home": {
     "title": "Bosh sahifa",
@@ -109,7 +117,8 @@
     "testScore": "Test balli",
     "accessModalDeleteButton": "O'chirish",
     "accessModalClose": "Yopish",
-    "accessModalTitle": "Siz bu foydalanuvchini o'chirmoqchimisiz?"
+    "accessModalTitle": "Siz bu foydalanuvchini o'chirmoqchimisiz?",
+    "accessModalDescription": "Talabani o‘chirish uning tizimga kirish huquqini yo‘qotishiga olib keladi. Davom etasizmi?"
   },
   "groupDetails": {
     "title": "Guruhi tafsilotlari",

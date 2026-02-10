@@ -21,6 +21,9 @@ import {
   X,
   Save,
   Trash,
+  ClipboardList,
+  UserCheck,
+  TrendingUp,
 } from "lucide-react";
 import DateTimePicker from "../components/DateTimePicker";
 
@@ -43,7 +46,12 @@ const Exam = ({ groups }) => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showResultsModal, setShowResultsModal] = useState(false);
+  const [showEvaluateModal, setShowEvaluateModal] = useState(false);
   const [selectedExam, setSelectedExam] = useState(null);
+  const [examResults, setExamResults] = useState([]);
+  const [selectedResult, setSelectedResult] = useState(null);
+  const [isLoadingResults, setIsLoadingResults] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -53,6 +61,12 @@ const Exam = ({ groups }) => {
     examEnd: "",
     group: "",
     requirements: [{ requirement: "", score: 1 }],
+  });
+
+  // Evaluation state
+  const [evaluationData, setEvaluationData] = useState({
+    evaluatedRequirements: [],
+    feedback: "",
   });
 
   useEffect(() => {
@@ -76,6 +90,77 @@ const Exam = ({ groups }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const fetchExamResults = async (examId) => {
+    try {
+      setIsLoadingResults(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_API}/api/exam/results-evaluation/${examId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setExamResults(response.data.results || []);
+    } catch (error) {
+      console.error(error);
+      toast.error("Не удалось загрузить результаты");
+    } finally {
+      setIsLoadingResults(false);
+    }
+  };
+
+  const handleViewResults = async (exam) => {
+    setSelectedExam(exam);
+    setShowResultsModal(true);
+    await fetchExamResults(exam._id);
+  };
+
+  const handleStartEvaluation = (result) => {
+    setSelectedResult(result);
+    setEvaluationData({
+      evaluatedRequirements: result.requirements.map(() => ({ isDone: false })),
+      feedback: result.describe || "",
+    });
+    setShowEvaluateModal(true);
+  };
+
+  const handleEvaluateResult = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_API}/api/exam/evaluate`,
+        {
+          resultId: selectedResult._id,
+          evaluatedRequirements: evaluationData.evaluatedRequirements,
+          feedback: evaluationData.feedback,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success("Результат успешно оценен");
+      setShowEvaluateModal(false);
+      setSelectedResult(null);
+      // Обновляем список результатов
+      await fetchExamResults(selectedExam._id);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message || "Не удалось оценить результат"
+      );
+    }
+  };
+
+  const toggleRequirement = (index) => {
+    const newRequirements = [...evaluationData.evaluatedRequirements];
+    newRequirements[index].isDone = !newRequirements[index].isDone;
+    setEvaluationData({
+      ...evaluationData,
+      evaluatedRequirements: newRequirements,
+    });
   };
 
   const handleCreateExam = async (e) => {
@@ -176,6 +261,29 @@ const Exam = ({ groups }) => {
     }
   };
 
+  const getResultStatusBadge = (status) => {
+    switch (status) {
+      case "appreciated":
+        return {
+          text: "Сдан",
+          color: "bg-green-100 text-green-700 border-green-300",
+          icon: CheckCircle,
+        };
+      case "rejected":
+        return {
+          text: "Не сдан",
+          color: "bg-red-100 text-red-700 border-red-300",
+          icon: X,
+        };
+      default:
+        return {
+          text: "Ожидает проверки",
+          color: "bg-yellow-100 text-yellow-700 border-yellow-300",
+          icon: Clock,
+        };
+    }
+  };
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("ru-RU", {
       day: "2-digit",
@@ -184,6 +292,15 @@ const Exam = ({ groups }) => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const calculateScore = () => {
+    if (!selectedResult) return 0;
+    return evaluationData.evaluatedRequirements.reduce((total, req, index) => {
+      return (
+        total + (req.isDone ? selectedResult.requirements[index].score : 0)
+      );
+    }, 0);
   };
 
   const filteredExams = exams.filter((exam) => {
@@ -467,17 +584,26 @@ const Exam = ({ groups }) => {
                       </div>
                       <div className="flex items-center gap-2">
                         <button
+                          onClick={() => handleViewResults(exam)}
+                          className="p-2 rounded-lg hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 transition-colors"
+                          title="Результаты"
+                        >
+                          <ClipboardList className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => {
                             setSelectedExam(exam);
                             setShowDetailModal(true);
                           }}
                           className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-indigo-600 transition-colors"
+                          title="Детали"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteExam(exam._id)}
                           className="p-2 rounded-lg hover:bg-red-50 text-gray-600 hover:text-red-600 transition-colors"
+                          title="Удалить"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -852,6 +978,366 @@ const Exam = ({ groups }) => {
                 </button>
               </div>
             </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Results Modal */}
+      {showResultsModal && selectedExam && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Результаты экзамена
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  {selectedExam.examTitle}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowResultsModal(false);
+                  setSelectedExam(null);
+                  setExamResults([]);
+                }}
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              {isLoadingResults ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+                  <p className="text-gray-600">Загрузка результатов...</p>
+                </div>
+              ) : examResults.length > 0 ? (
+                <div className="space-y-4">
+                  {examResults.map((result) => {
+                    const statusBadge = getResultStatusBadge(result.status);
+                    const StatusIcon = statusBadge.icon;
+
+                    return (
+                      <div
+                        key={result._id}
+                        className="border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-lg font-bold text-gray-900">
+                                {result.user?.name || "Студент"}
+                              </h3>
+                              <span
+                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${statusBadge.color}`}
+                              >
+                                <StatusIcon className="w-3.5 h-3.5" />
+                                {statusBadge.text}
+                              </span>
+                            </div>
+                            {result.user?.email && (
+                              <p className="text-sm text-gray-600">
+                                {result.user.email}
+                              </p>
+                            )}
+                          </div>
+                          {result.status === "pending" && (
+                            <button
+                              onClick={() => handleStartEvaluation(result)}
+                              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                            >
+                              <UserCheck className="w-4 h-4" />
+                              Оценить
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          <div className="flex items-center gap-2 text-sm">
+                            <TrendingUp className="w-4 h-4 text-gray-400" />
+                            <span className="text-gray-600">Баллы:</span>
+                            <span className="font-bold text-gray-900">
+                              {result.score || 0} / {selectedExam.maxScore || 0}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Clock className="w-4 h-4 text-gray-400" />
+                            <span className="text-gray-600">Отправлено:</span>
+                            <span className="text-gray-900">
+                              {formatDate(result.createdAt)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="p-4 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <FileText className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-700">
+                              Ссылка на проект:
+                            </span>
+                          </div>
+                          <a
+                            href={result.projectLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-indigo-600 hover:text-indigo-700 text-sm break-all"
+                          >
+                            {result.projectLink}
+                          </a>
+                        </div>
+
+                        {result.describe && (
+                          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                            <p className="text-sm text-gray-700">
+                              <span className="font-medium">Комментарий: </span>
+                              {result.describe}
+                            </p>
+                          </div>
+                        )}
+
+                        {result.status !== "pending" && (
+                          <div className="mt-4 space-y-2">
+                            <h4 className="text-sm font-semibold text-gray-700">
+                              Выполненные требования:
+                            </h4>
+                            {result.requirements?.map((req, idx) => (
+                              <div
+                                key={idx}
+                                className={`flex items-center justify-between p-3 rounded-lg ${
+                                  req.isDone
+                                    ? "bg-green-50 border border-green-200"
+                                    : "bg-red-50 border border-red-200"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2 flex-1">
+                                  {req.isDone ? (
+                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                  ) : (
+                                    <X className="w-4 h-4 text-red-600" />
+                                  )}
+                                  <span className="text-sm text-gray-900">
+                                    {req.requirement}
+                                  </span>
+                                </div>
+                                <span
+                                  className={`px-2 py-1 rounded text-xs font-semibold ${
+                                    req.isDone
+                                      ? "bg-green-600 text-white"
+                                      : "bg-red-600 text-white"
+                                  }`}
+                                >
+                                  {req.isDone ? `+${req.score}` : "0"} б.
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <ClipboardList className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-700 mb-2">
+                    Результатов пока нет
+                  </h3>
+                  <p className="text-gray-500">
+                    Студенты еще не отправили свои работы
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Evaluate Modal */}
+      {showEvaluateModal && selectedResult && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Оценка результата
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  {selectedResult.user?.name}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowEvaluateModal(false);
+                  setSelectedResult(null);
+                }}
+                className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEvaluateResult} className="p-6 space-y-6">
+              {/* Project Link */}
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Ссылка на проект:
+                  </span>
+                </div>
+                <a
+                  href={selectedResult.projectLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 hover:text-indigo-700 text-sm break-all"
+                >
+                  {selectedResult.projectLink}
+                </a>
+              </div>
+
+              {/* Student Comment */}
+              {selectedResult.describe && (
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700 block mb-2">
+                    Комментарий студента:
+                  </span>
+                  <p className="text-sm text-gray-700">
+                    {selectedResult.describe}
+                  </p>
+                </div>
+              )}
+
+              {/* Requirements Checklist */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                  Отметьте выполненные требования:
+                </h3>
+                <div className="space-y-3">
+                  {selectedResult.requirements?.map((req, index) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        evaluationData.evaluatedRequirements[index]?.isDone
+                          ? "bg-green-50 border-green-500"
+                          : "bg-gray-50 border-gray-200 hover:border-gray-300"
+                      }`}
+                      onClick={() => toggleRequirement(index)}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-3 flex-1">
+                          <div
+                            className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center ${
+                              evaluationData.evaluatedRequirements[index]
+                                ?.isDone
+                                ? "bg-green-500 border-green-500"
+                                : "border-gray-300"
+                            }`}
+                          >
+                            {evaluationData.evaluatedRequirements[index]
+                              ?.isDone && (
+                              <CheckCircle className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-gray-900 font-medium">
+                              {req.requirement}
+                            </p>
+                          </div>
+                        </div>
+                        <span
+                          className={`px-3 py-1 rounded-lg text-sm font-semibold ${
+                            evaluationData.evaluatedRequirements[index]?.isDone
+                              ? "bg-green-600 text-white"
+                              : "bg-gray-200 text-gray-600"
+                          }`}
+                        >
+                          {req.score} б.
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Score Summary */}
+              <div className="p-4 bg-indigo-50 rounded-lg border-2 border-indigo-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-indigo-900">
+                    Итоговый балл:
+                  </span>
+                  <span className="text-2xl font-bold text-indigo-600">
+                    {calculateScore()} / {selectedExam?.maxScore || 0}
+                  </span>
+                </div>
+                <div className="mt-2 w-full bg-indigo-200 rounded-full h-2">
+                  <div
+                    className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${
+                        (calculateScore() / (selectedExam?.maxScore || 1)) * 100
+                      }%`,
+                    }}
+                  ></div>
+                </div>
+                <p className="text-xs text-indigo-700 mt-2">
+                  {calculateScore() >= (selectedExam?.maxScore || 0) * 0.6
+                    ? "✓ Экзамен сдан (60%+ баллов)"
+                    : "✗ Экзамен не сдан (менее 60% баллов)"}
+                </p>
+              </div>
+
+              {/* Feedback */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Обратная связь (опционально)
+                </label>
+                <textarea
+                  value={evaluationData.feedback}
+                  onChange={(e) =>
+                    setEvaluationData({
+                      ...evaluationData,
+                      feedback: e.target.value,
+                    })
+                  }
+                  rows={4}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Оставьте комментарий для студента..."
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEvaluateModal(false);
+                    setSelectedResult(null);
+                  }}
+                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Отмена
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  <Save className="w-5 h-5" />
+                  Сохранить оценку
+                </button>
+              </div>
+            </form>
           </motion.div>
         </div>
       )}

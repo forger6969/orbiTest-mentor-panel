@@ -26,15 +26,23 @@
     "progress": "Прогресс"
   },
   "auth": {
-    "login": "Вход",
-    "email": "Email",
-    "password": "Пароль",
-    "emailPlaceholder": "Введите email",
     "passwordPlaceholder": "Введите пароль",
-    "invalidCredentials": "Email или пароль неверны",
     "minPasswordLength": "Пароль должен содержать минимум 6 символов",
     "enterValidEmail": "Введите корректный email",
-    "signIn": "Войти"
+    "signIn": "Войти",
+    "login": "Вход",
+    "email": "Email",
+    "emailPlaceholder": "Введите ваш email",
+    "password": "Пароль",
+    "signingIn": "Вход...",
+    "continueWithGoogle": "Войти через Google",
+    "or": "ИЛИ",
+    "invalidCredentials": "Неверный email или пароль",
+    "googleAuthError": "Ошибка авторизации через Google",
+    "googleAuthSuccess": "Успешный вход через Google",
+    "tokenNotReceived": "Токен не получен",
+    "authenticating": "Авторизация...",
+    "pleaseWait": "Пожалуйста, подождите"
   },
   "home": {
     "title": "Главная",
@@ -109,7 +117,8 @@
     "testScore": "Оценка теста",
     "accessModalDeleteButton": "Удалить",
     "accessModalClose": "Закрыть",
-    "accessModalTitle": "Вы точно хотите удалить етого пользователя?"
+    "accessModalTitle": "Вы точно хотите удалить етого пользователя?",
+    "accessModalDescription": "Удаление студента приведёт к потере его доступа. Продолжить?"
   },
   "groupDetails": {
     "title": "Подробности группы",

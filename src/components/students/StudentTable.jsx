@@ -287,6 +287,9 @@ const StudentTable = ({
                             <button
                               onClick={() => {
                                 setStudents(student);
+                                console.log(
+                                  `[TABLE] ${modalStudent} ${student._id}`
+                                );
                                 setModal(true);
                               }}
                               className="p-2 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
@@ -302,8 +305,15 @@ const StudentTable = ({
                 : null}
           </tbody>
         </table>
-        {isModal && (
-          <AccessModal students={modalStudent} handleDelete={handleDelete} />
+        {isModal && modalStudent !== null && (
+          <AccessModal
+            students={modalStudent}
+            handleDelete={handleDelete}
+            onClose={() => {
+              setModal(false);
+              setStudents(null);
+            }}
+          />
         )}
         {!isLoading && filteredStudents.length === 0 && (
           <div className="text-center py-12 text-gray-500">

@@ -6,12 +6,16 @@ import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MentorAuthCallback from "./pages/MentorAuthCallback";
 
 const App = () => {
   return (
     <>
       <Routes>
         <Route path="/" element={<AuthPage />} />
+        <Route path="/auth/success" element={<AuthPage />} />
+        <Route path="/auth/error" element={<AuthPage />} />
+
         <Route
           path="/dashboard/*"
           element={
@@ -20,6 +24,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route path="/mentor/auth/callback" element={<MentorAuthCallback />} />
       </Routes>
       <ToastContainer
         newestOnTop

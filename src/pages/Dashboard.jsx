@@ -75,9 +75,11 @@ const Dashboard = () => {
       );
 
       console.log(req.data);
-      getUser();
+      await getUser(); // ⚠️ Добавьте await!
+      return req.data; // ⚠️ Добавьте return!
     } catch (err) {
       console.log(err);
+      throw err; // ⚠️ ВАЖНО! Пробросьте ошибку
     }
   };
 

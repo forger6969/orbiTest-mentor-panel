@@ -369,9 +369,9 @@ const Students = ({
     }
   };
 
-  const handleDelete = (student) => {
+  const handleDelete = async (student) => {
     if (onDeleteStudent) {
-      onDeleteStudent(student);
+      await onDeleteStudent(student);
     }
   };
 
