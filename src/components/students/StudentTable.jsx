@@ -310,7 +310,6 @@ const StudentTable = ({
             <p className="text-sm">Ничего не найдено</p>
           </div>
         )}
-        emir7788
       </div>
 
       {/* Пагинация */}
