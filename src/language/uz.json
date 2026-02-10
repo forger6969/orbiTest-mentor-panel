@@ -106,7 +106,10 @@
     "phone": "Telefon",
     "groupName": "Guruh",
     "lastActivity": "So'nggi faoliyat",
-    "testScore": "Test balli"
+    "testScore": "Test balli",
+    "accessModalDeleteButton": "O'chirish",
+    "accessModalClose": "Yopish",
+    "accessModalTitle": "Siz bu foydalanuvchini o'chirmoqchimisiz?"
   },
   "groupDetails": {
     "title": "Guruhi tafsilotlari",

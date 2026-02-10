@@ -106,7 +106,10 @@
     "phone": "Телефон",
     "groupName": "Группа",
     "lastActivity": "Последняя активность",
-    "testScore": "Оценка теста"
+    "testScore": "Оценка теста",
+    "accessModalDeleteButton": "Удалить",
+    "accessModalClose": "Закрыть",
+    "accessModalTitle": "Вы точно хотите удалить етого пользователя?"
   },
   "groupDetails": {
     "title": "Подробности группы",

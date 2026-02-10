@@ -1,15 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Users,
-  UserCheck,
-  Calendar,
-  Award,
-  BookOpen,
-  Clock,
-  TrendingUp,
-  MessageCircle,
-} from "lucide-react";
+import { Users, UserCheck, TrendingUp, MessageCircle } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -42,104 +33,18 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler,
+  Filler
 );
 
 const Home = ({ groups = [], students = [], exams = [] }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  // Статические данные для демонстрации (если пропсы пусты)
-  const mockGroups = [
-    {
-      _id: "1",
-      groupName: "Группа A-101",
-      students: ["1", "2", "3"],
-      groupDescribe: "Математика",
-      groupPerformance: 85,
-      groupTime: "10:00",
-      avatar: "https://via.placeholder.com/40",
-    },
-    {
-      _id: "2",
-      groupName: "Группа B-205",
-      students: ["4", "5", "6", "7"],
-      groupDescribe: "Физика",
-      groupPerformance: 92,
-      groupTime: "14:00",
-      avatar: "https://via.placeholder.com/40",
-    },
-    {
-      _id: "3",
-      groupName: "Группа C-303",
-      students: ["8", "9"],
-      groupDescribe: "Химия",
-      groupPerformance: 78,
-      groupTime: "09:00",
-      avatar: "https://via.placeholder.com/40",
-    },
-    {
-      _id: "4",
-      groupName: "Группа D-410",
-      students: ["10", "11", "12"],
-      groupDescribe: "Английский",
-      groupPerformance: 88,
-      groupTime: "11:00",
-      avatar: "https://via.placeholder.com/40",
-    },
-  ];
-
-  const mockStudents = Array.from({ length: 1248 }, (_, i) => ({
-    _id: `student-${i}`,
-    firstName: `Student${i}`,
-    lastName: `Last${i}`,
-    groupID: mockGroups[i % 4]._id,
-  }));
-
-  const mockExams = [
-    {
-      _id: "1",
-      examTitle: "Математический анализ",
-      examStart: new Date("2025-02-05T10:00:00"),
-      examEnd: new Date("2025-02-05T12:00:00"),
-      status: "underway",
-      group: { groupName: "A-101" },
-    },
-    {
-      _id: "2",
-      examTitle: "Квантовая физика",
-      examStart: new Date("2025-02-06T14:30:00"),
-      examEnd: new Date("2025-02-06T16:30:00"),
-      status: "underway",
-      group: { groupName: "B-205" },
-    },
-    {
-      _id: "3",
-      examTitle: "Органическая химия",
-      examStart: new Date("2025-02-07T09:00:00"),
-      examEnd: new Date("2025-02-07T11:00:00"),
-      status: "underway",
-      group: { groupName: "C-303" },
-    },
-    {
-      _id: "4",
-      examTitle: "Advanced English",
-      examStart: new Date("2025-02-08T11:00:00"),
-      examEnd: new Date("2025-02-08T13:00:00"),
-      status: "completed",
-      group: { groupName: "D-410" },
-    },
-  ];
-
-  // Используем реальные данные или моковые
-  const actualGroups = groups.length > 0 ? groups : mockGroups;
-  const actualStudents = students.length > 0 ? students : mockStudents;
-  const actualExams = exams.length > 0 ? exams : mockExams;
 
   // Вычисляем статистику
   const stats = useMemo(() => {
-    const totalStudents = actualStudents.length;
-    const activeGroups = actualGroups.filter(
-      (g) => g.students && g.students.length > 0,
+    const totalStudents = students.length;
+    const activeGroups = groups.filter(
+      (g) => g.students && g.students.length > 0
     ).length;
 
     // Экзамены сегодня
@@ -148,13 +53,13 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const todayExams = actualExams.filter((exam) => {
+    const todayExams = exams.filter((exam) => {
       const examDate = new Date(exam.examStart);
       return examDate >= today && examDate < tomorrow;
     });
 
     const completedToday = todayExams.filter(
-      (e) => e.status === "completed",
+      (e) => e.status === "completed"
     ).length;
 
     return {
@@ -163,11 +68,13 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
       todayExams: todayExams.length,
       completedToday,
     };
-  }, [actualStudents, actualGroups, actualExams]);
+  }, [students, groups, exams]);
 
   // Данные для графика успеваемости по группам
   const performanceData = useMemo(() => {
-    const topGroups = actualGroups
+    if (groups.length === 0) return null;
+
+    const topGroups = groups
       .sort((a, b) => (b.groupPerformance || 0) - (a.groupPerformance || 0))
       .slice(0, 5);
 
@@ -190,11 +97,13 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
         },
       ],
     };
-  }, [actualGroups]);
+  }, [groups]);
 
   // Данные для круговой диаграммы - распределение студентов по группам
   const studentDistributionData = useMemo(() => {
-    const topGroups = actualGroups
+    if (groups.length === 0) return null;
+
+    const topGroups = groups
       .sort((a, b) => (b.students?.length || 0) - (a.students?.length || 0))
       .slice(0, 4);
 
@@ -214,7 +123,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
         },
       ],
     };
-  }, [actualGroups]);
+  }, [groups]);
 
   // Опции для барного графика
   const chartOptions = {
@@ -298,7 +207,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
   const statsCards = [
     {
       title: t("home.summGroups"),
-      value: actualGroups.length.toString(),
+      value: groups.length.toString(),
       icon: Users,
       bgColor: "bg-slate-600",
       textColor: "text-white",
@@ -328,7 +237,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
 
   // Последние группы
   const recentGroups = useMemo(() => {
-    return actualGroups.slice(0, 4).map((group) => ({
+    return groups.slice(0, 4).map((group) => ({
       _id: group._id,
       name: group.groupName,
       students: group.students?.length || 0,
@@ -337,12 +246,12 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
       avatar: group.avatar,
       performance: group.groupPerformance || 0,
     }));
-  }, [actualGroups]);
+  }, [groups]);
 
   // Предстоящие экзамены
   const upcomingExams = useMemo(() => {
     const now = new Date();
-    return actualExams
+    return exams
       .filter((exam) => new Date(exam.examStart) > now)
       .sort((a, b) => new Date(a.examStart) - new Date(b.examStart))
       .slice(0, 4)
@@ -363,7 +272,7 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
           status: exam.status,
         };
       });
-  }, [actualExams]);
+  }, [exams]);
 
   return (
     <div className="min-h-screen p-8 mx-auto w-[70%]">
@@ -404,23 +313,43 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {recentGroups.length > 0
-              ? recentGroups.map((group) => (
-                  <GroupCard key={group._id} group={group} />
-                ))
-              : null}
-          </div>
+          {recentGroups.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {recentGroups.map((group) => (
+                <GroupCard key={group._id} group={group} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-lg p-12 text-center">
+              <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <p className="text-slate-500 text-sm">Групп пока нет</p>
+              <p className="text-slate-400 text-xs mt-1">
+                Создайте первую группу для начала работы
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <PerformanceChart data={performanceData} options={chartOptions} />
-          <StudentDistributionChart
-            data={studentDistributionData}
-            options={doughnutOptions}
-          />
-        </div>
+        {performanceData && studentDistributionData ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <PerformanceChart data={performanceData} options={chartOptions} />
+            <StudentDistributionChart
+              data={studentDistributionData}
+              options={doughnutOptions}
+            />
+          </div>
+        ) : (
+          <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-lg p-12 text-center mb-8">
+            <TrendingUp className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-500 text-sm">
+              Данных для графиков пока нет
+            </p>
+            <p className="text-slate-400 text-xs mt-1">
+              Добавьте группы и студентов для отображения статистики
+            </p>
+          </div>
+        )}
 
         {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

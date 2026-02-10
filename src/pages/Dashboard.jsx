@@ -62,6 +62,25 @@ const Dashboard = () => {
     sessionStorage.setItem("welcomeShown", "true");
   };
 
+  const handleDeleteStudent = async (student) => {
+    try {
+      const token = localStorage.getItem("token");
+      const req = await axios.delete(
+        import.meta.env.VITE_BACKEND_API + `/api/user/${student._id}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(req.data);
+      getUser();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const addStudentToGroup = async (studentId, groupId) => {
     try {
       const token = localStorage.getItem("token");
@@ -131,6 +150,7 @@ const Dashboard = () => {
                     studentsInTest={studentsInTest}
                     groups={user.groups}
                     onUpdateStudentGroup={addStudentToGroup}
+                    onDeleteStudent={handleDeleteStudent}
                   />
                 }
               />

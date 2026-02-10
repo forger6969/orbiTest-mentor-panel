@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Edit3, Eye, Mail, Circle, FileText, Trash2 } from "lucide-react";
+import AccessModal from "../AccessModal";
 
 const gradeColors = {
   junior: "bg-blue-50 text-blue-700 border border-blue-200",
@@ -65,6 +66,8 @@ const StudentTable = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isModal, setModal] = useState(false);
+  const [modalStudent, setStudents] = useState(null);
   const studentsPerPage = 6;
 
   const isOnline = (studentId) => {
@@ -282,7 +285,10 @@ const StudentTable = ({
                               <Edit3 className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleDelete(student)}
+                              onClick={() => {
+                                setStudents(student);
+                                setModal(true);
+                              }}
                               className="p-2 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
                               title="Удалить студента"
                             >
@@ -296,12 +302,15 @@ const StudentTable = ({
                 : null}
           </tbody>
         </table>
-
+        {isModal && (
+          <AccessModal students={modalStudent} handleDelete={handleDelete} />
+        )}
         {!isLoading && filteredStudents.length === 0 && (
           <div className="text-center py-12 text-gray-500">
             <p className="text-sm">Ничего не найдено</p>
           </div>
         )}
+        emir7788
       </div>
 
       {/* Пагинация */}
