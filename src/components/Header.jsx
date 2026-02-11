@@ -38,7 +38,7 @@ import {
   CheckCircle, // success
   XOctagon, // error
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = ({
   user,
@@ -53,6 +53,7 @@ const Header = ({
   const [openProfile, setOpenProfile] = useState(false);
   const [openLanguage, setOpenLanguage] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [isLoader, setLoader] = useState(false);
   const navigate = useNavigate();
 
   const notifRef = useRef(null);
@@ -240,6 +241,17 @@ const Header = ({
     }
   };
 
+  const handleReload = async () => {
+    try {
+      setLoader(true);
+      await reload();
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   // ✅ БЕЙДЖИ ДЛЯ ОСОБЫХ УВЕДОМЛЕНИЙ (БЕЗ ГРАДИЕНТОВ)
   const getSpecialBadge = (type) => {
     switch (type) {
@@ -375,8 +387,14 @@ const Header = ({
           )}
         </div>
 
-        <button onClick={reload}>
-          <RotateCcw />
+        <button
+          className={`flex items-center gap-2 bg-indigo-600 px-[10px] py-1 rounded-sm text-white transiton-all ${isLoader ? "opacity-[60%] cursor-not-allowed" : "cursor-pointer"}`}
+          onClick={handleReload}
+          Обновить
+          disabled={isLoader}
+        >
+          {isLoader ? "Обновление..." : "Обновить"}
+          <RotateCcw size={18} />
         </button>
 
         {/* Notifications */}
@@ -622,10 +640,13 @@ const Header = ({
               </div>
 
               <div className="py-1">
-                <button className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-slate-50 text-sm text-slate-700 transition">
+                <Link
+                  to={"/dashboard/profile"}
+                  className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-slate-50 text-sm text-slate-700 transition"
+                >
                   <User className="w-4 h-4 text-slate-500" />
                   <span>Профиль</span>
-                </button>
+                </Link>
                 <button className="flex items-center gap-3 w-full px-4 py-2.5 hover:bg-slate-50 text-sm text-slate-700 transition">
                   <Settings className="w-4 h-4 text-slate-500" />
                   <span>Настройки</span>

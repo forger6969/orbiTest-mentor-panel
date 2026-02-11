@@ -15,6 +15,8 @@ import { AnimatePresence } from "framer-motion";
 import GroupDetails from "./GroupDetails";
 import UpcomingExams from "../components/home/UpcomingExams";
 import Exam from "./Exam";
+import Profile from "./Profile";
+import Settings from "./Settings";
 
 const Dashboard = () => {
   const [showSplash, setShowSplash] = useState(false);
@@ -159,6 +161,8 @@ const Dashboard = () => {
               <Route path="/groups/create" element={<CreateGroup />} />
               <Route path="/groups/:groupId" element={<GroupDetails />} />
               <Route path="/exams" element={<Exam groups={user.groups} />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </AnimatePresence>
         </div>

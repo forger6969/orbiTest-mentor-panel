@@ -1,32 +1,38 @@
 import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 
-// Функция для воспроизведения звука
+// Доступные рингтоны
+const RINGTONES = {
+  telegram: "/telegram_notification.mp3",
+  "dragon-new": "/dragon-studio-new-notification-3-398649.mp3",
+  "dragon-effect": "/dragon-studio-notification-sound-effect-372475.mp3",
+  notification: "/notification.mp3",
+  universfield: "/universfield-new-notification-024-370048.mp3",
+};
+
+// Функция для воспроизведения звука с настройками
 const playNotificationSound = () => {
   try {
-    const audio = new Audio("/telegram_notification.mp3");
-    audio.volume = 0.5;
+    // Получаем настройки из localStorage
+    const savedSettings = localStorage.getItem("appSettings");
+    const settings = savedSettings ? JSON.parse(savedSettings) : {};
+
+    // Проверяем, включены ли звуковые уведомления
+    if (settings.enableSound === false) {
+      return;
+    }
+
+    // Получаем выбранный рингтон и громкость
+    const selectedRingtone = settings.ringtone || "telegram";
+    const volume = (settings.volume || 50) / 100;
+
+    // Получаем путь к файлу рингтона
+    const ringtoneFile = RINGTONES[selectedRingtone] || RINGTONES.telegram;
+
+    // Воспроизводим звук
+    const audio = new Audio(ringtoneFile);
+    audio.volume = volume;
     audio.play().catch((err) => console.log("Could not play sound:", err));
-
-    // const audioContext = new (
-    //   window.AudioContext || window.webkitAudioContext
-    // )();
-    // const oscillator = audioContext.createOscillator();
-    // const gainNode = audioContext.createGain();
-
-    // oscillator.connect(gainNode);
-    // gainNode.connect(audioContext.destination);
-
-    // oscillator.frequency.value = 800;
-    // oscillator.type = "sine";
-    // gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    // gainNode.gain.exponentialRampToValueAtTime(
-    //   0.01,
-    //   audioContext.currentTime + 0.5
-    // );
-
-    // oscillator.start(audioContext.currentTime);
-    // oscillator.stop(audioContext.currentTime + 0.5);
   } catch (error) {
     console.error("Error playing notification sound:", error);
   }
@@ -93,6 +99,14 @@ export const useSocket = (userId, userType = "mentor") => {
     socket.on("notification", (notification) => {
       console.log("🔔 New notification:", notification);
 
+      // Проверяем, включены ли уведомления
+      const savedSettings = localStorage.getItem("appSettings");
+      const settings = savedSettings ? JSON.parse(savedSettings) : {};
+
+      if (settings.enableNotifications === false) {
+        return;
+      }
+
       // Добавляем уведомление в список
       setNotifications((prev) => [notification, ...prev]);
 
@@ -100,7 +114,10 @@ export const useSocket = (userId, userType = "mentor") => {
       playNotificationSound();
 
       // Показываем браузерное уведомление
-      if (Notification.permission === "granted") {
+      if (
+        settings.enableBrowserNotifications !== false &&
+        Notification.permission === "granted"
+      ) {
         const browserNotification = new Notification(notification.title, {
           body: notification.text,
           icon: "/logo.png",
