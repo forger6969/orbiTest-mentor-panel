@@ -24,6 +24,7 @@ import {
   ClipboardList,
   UserCheck,
   TrendingUp,
+  Send,
 } from "lucide-react";
 import DateTimePicker from "../components/DateTimePicker";
 
@@ -166,6 +167,7 @@ const Exam = ({ groups }) => {
   const handleCreateExam = async (e) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const token = localStorage.getItem("token");
       await axios.post(
         `${import.meta.env.VITE_BACKEND_API}/api/exam/create`,
@@ -183,6 +185,8 @@ const Exam = ({ groups }) => {
       toast.error(
         error.response?.data?.message || "Не удалось создать экзамен"
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -313,6 +317,31 @@ const Exam = ({ groups }) => {
     const status = getStatusBadge(exam).text;
     return matchesSearch && status === filterStatus;
   });
+
+  const sendParents = async (examId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        import.meta.env.VITE_BACKEND_API + `/api/exam/send-results/${examId}`,
+        {},
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response);
+
+      if (response.status === 200) {
+        console.log("Parents notified successfully");
+      } else {
+        console.error("Failed to notify parents");
+      }
+    } catch (error) {
+      console.error("Error sending parents:", error);
+    }
+  };
 
   const ExamCardSkeleton = () => {
     return (
@@ -583,30 +612,48 @@ const Exam = ({ groups }) => {
                         )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleViewResults(exam)}
-                          className="p-2 rounded-lg hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 transition-colors"
-                          title="Результаты"
+                        <div
+                          className="tooltip tooltip-top"
+                          data-tip="Просмотр результатов"
                         >
-                          <ClipboardList className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedExam(exam);
-                            setShowDetailModal(true);
-                          }}
-                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-indigo-600 transition-colors"
-                          title="Детали"
+                          <button
+                            onClick={() => handleViewResults(exam)}
+                            className="p-2 rounded-lg hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 transition-colors"
+                          >
+                            <ClipboardList className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="tooltip tooltip-top" data-tip="Детали">
+                          <button
+                            onClick={() => {
+                              setSelectedExam(exam);
+                              setShowDetailModal(true);
+                            }}
+                            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-indigo-600 transition-colors"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="tooltip tooltip-top" data-tip="Удалить">
+                          <button
+                            onClick={() => handleDeleteExam(exam._id)}
+                            className="p-2 rounded-lg hover:bg-red-50 text-gray-600 hover:text-red-600 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div
+                          className="tooltip tooltip-top"
+                          data-tip="Отправить результаты родителям"
+                          onClick={() => sendParents(exam._id)}
                         >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteExam(exam._id)}
-                          className="p-2 rounded-lg hover:bg-red-50 text-gray-600 hover:text-red-600 transition-colors"
-                          title="Удалить"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                          <button className="p-2 rounded-lg hover:bg-green-50 text-gray-600 hover:text-green-600 transition-colors">
+                            <Send className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -837,11 +884,16 @@ const Exam = ({ groups }) => {
                   Отмена
                 </button>
                 <button
+                  disabled={isLoading}
                   type="submit"
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors ${
+                    isLoading
+                      ? "cursor-not-allowed opacity-[80%]"
+                      : "cursor-pointer"
+                  }`}
                 >
                   <Save className="w-5 h-5" />
-                  Создать экзамен
+                  {isLoading ? "Создание..." : "Создать экзамен"}
                 </button>
               </div>
             </form>

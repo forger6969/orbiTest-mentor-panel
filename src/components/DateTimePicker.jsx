@@ -81,9 +81,7 @@ const DateTimePicker = ({ value, onChange, label, required }) => {
     finalDate.setHours(hours);
     finalDate.setMinutes(minutes);
 
-    // Форматируем для input datetime-local
-    const formatted = finalDate.toISOString().slice(0, 16);
-    onChange({ target: { value: formatted } });
+    onChange({ target: { value: finalDate } });
     setIsOpen(false);
   };
 

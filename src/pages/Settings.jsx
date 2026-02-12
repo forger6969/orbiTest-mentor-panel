@@ -165,9 +165,7 @@ const Settings = () => {
   return (
     <div className="ml-64 mt-16 min-h-screen bg-slate-50 mx-auto w-full">
       <div className="flex h-[calc(100vh-4rem)]">
-        {/* Левая панель - меню */}
         <div className="w-80 bg-white border-r border-slate-700 flex flex-col">
-          {/* Заголовок */}
           <div className="p-6 border-b border-slate-700">
             <h1 className="text-2xl font-bold text-black mb-1">Настройки</h1>
             <p className="text-sm text-slate-400">
@@ -175,12 +173,12 @@ const Settings = () => {
             </p>
           </div>
 
-          {/* Поиск */}
           <div className="p-4 border-b border-slate-700">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
+                w
                 placeholder="Поиск настроек..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -189,7 +187,6 @@ const Settings = () => {
             </div>
           </div>
 
-          {/* Список секций */}
           <div className="flex-1 overflow-y-auto p-3">
             {filteredSections.map((section) => {
               const Icon = section.icon;
@@ -219,10 +216,8 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Правая панель - контент */}
         <div className="flex-1 overflow-y-auto bg-slate-50">
           <div className="max-w-5xl mx-auto p-8">
-            {/* СЕКЦИЯ: УВЕДОМЛЕНИЯ */}
             {activeSection === "notifications" && (
               <div className="space-y-6">
                 <div className="text-center mb-8">
@@ -234,7 +229,6 @@ const Settings = () => {
                   </p>
                 </div>
 
-                {/* Основные переключатели */}
                 <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-200 shadow-sm">
                   <div className="p-5 flex items-center justify-between">
                     <div className="flex-1">
@@ -312,7 +306,6 @@ const Settings = () => {
                   </div>
                 </div>
 
-                {/* Громкость */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 bg-indigo-100 rounded-lg">
@@ -341,7 +334,6 @@ const Settings = () => {
                   </div>
                 </div>
 
-                {/* Выбор рингтона */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 bg-indigo-100 rounded-lg">
@@ -402,7 +394,6 @@ const Settings = () => {
               </div>
             )}
 
-            {/* СЕКЦИЯ: ВНЕШНИЙ ВИД */}
             {activeSection === "appearance" && (
               <div className="space-y-6">
                 <div className="text-center mb-8">
@@ -427,7 +418,6 @@ const Settings = () => {
               </div>
             )}
 
-            {/* СЕКЦИЯ: АККАУНТ */}
             {activeSection === "account" && (
               <div className="space-y-6">
                 <div className="text-center mb-8">
@@ -452,7 +442,6 @@ const Settings = () => {
               </div>
             )}
 
-            {/* СЕКЦИЯ: ПРИВАТНОСТЬ */}
             {activeSection === "privacy" && (
               <div className="space-y-6">
                 <div className="text-center mb-8">
@@ -477,7 +466,6 @@ const Settings = () => {
               </div>
             )}
 
-            {/* СЕКЦИЯ: ЯЗЫК */}
             {activeSection === "language" && (
               <div className="space-y-6">
                 <div className="text-center mb-8">

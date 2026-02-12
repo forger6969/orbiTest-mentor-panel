@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 
-// Доступные рингтоны
 const RINGTONES = {
   telegram: "/telegram_notification.mp3",
   "dragon-new": "/dragon-studio-new-notification-3-398649.mp3",
@@ -10,26 +9,20 @@ const RINGTONES = {
   universfield: "/universfield-new-notification-024-370048.mp3",
 };
 
-// Функция для воспроизведения звука с настройками
 const playNotificationSound = () => {
   try {
-    // Получаем настройки из localStorage
     const savedSettings = localStorage.getItem("appSettings");
     const settings = savedSettings ? JSON.parse(savedSettings) : {};
 
-    // Проверяем, включены ли звуковые уведомления
     if (settings.enableSound === false) {
       return;
     }
 
-    // Получаем выбранный рингтон и громкость
     const selectedRingtone = settings.ringtone || "telegram";
     const volume = (settings.volume || 50) / 100;
 
-    // Получаем путь к файлу рингтона
     const ringtoneFile = RINGTONES[selectedRingtone] || RINGTONES.telegram;
 
-    // Воспроизводим звук
     const audio = new Audio(ringtoneFile);
     audio.volume = volume;
     audio.play().catch((err) => console.log("Could not play sound:", err));
@@ -45,7 +38,6 @@ export const useSocket = (userId, userType = "mentor") => {
   const [loading, setLoading] = useState(true);
   const socketRef = useRef(null);
 
-  // Загрузка старых уведомлений из API
   useEffect(() => {
     if (!userId) return;
 
@@ -126,7 +118,6 @@ export const useSocket = (userId, userType = "mentor") => {
           requireInteraction: false,
         });
 
-        // Закрываем через 5 секунд
         setTimeout(() => browserNotification.close(), 5000);
       }
     });
