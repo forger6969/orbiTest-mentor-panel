@@ -90,7 +90,7 @@ const Sidebar = ({ user }) => {
   };
 
   return (
-    <div className="w-64 bg-white border-r border-slate-200/60 flex flex-col shadow-xl shadow-slate-900/5 min-h-screen max-h-screen fixed left-0 top-0 z-50">
+    <div className="mentor-rail w-64 bg-white border-r border-slate-200/60 flex flex-col shadow-xl shadow-slate-900/5 min-h-screen max-h-screen fixed left-0 top-0 z-50">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-300/50 to-transparent"></div>
       <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-300/50 to-transparent"></div>

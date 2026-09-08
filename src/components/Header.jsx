@@ -330,7 +330,7 @@ const Header = ({
   });
 
   return (
-    <header className="fixed top-0 left-64 right-0 h-16 bg-white border-b border-slate-200/60 z-40 flex items-center justify-between px-6 shadow-sm">
+    <header className="mentor-topbar fixed top-0 left-64 right-0 h-16 bg-white border-b border-slate-200/60 z-40 flex items-center justify-between px-6 shadow-sm">
       {/* LEFT */}
       <div className="flex items-center gap-4">
         <div className="relative">

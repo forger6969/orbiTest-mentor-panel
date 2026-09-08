@@ -226,7 +226,7 @@ const GroupDetails = () => {
 
   return (
     <motion.div
-      className="w-[87%] ml-64 min-h-screen bg-slate-50 mt-17.5"
+      className="mentor-page w-[87%] ml-64 min-h-screen bg-slate-50 mt-17.5"
       variants={pageAnimation}
       initial="initial"
       animate="animate"

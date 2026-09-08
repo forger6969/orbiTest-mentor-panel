@@ -163,7 +163,7 @@ const Settings = () => {
   );
 
   return (
-    <div className="ml-64 mt-16 min-h-screen bg-slate-50 mx-auto w-full">
+    <div className="mentor-page ml-64 mt-16 min-h-screen bg-slate-50 mx-auto w-full">
       <div className="flex h-[calc(100vh-4rem)]">
         <div className="w-80 bg-white border-r border-slate-700 flex flex-col">
           <div className="p-6 border-b border-slate-700">

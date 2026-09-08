@@ -80,7 +80,7 @@ const CreateGroup = () => {
   };
 
   return (
-    <div className="ml-0 md:ml-64 min-h-screen bg-base-200 p-6 pt-24">
+    <div className="mentor-page ml-0 md:ml-64 min-h-screen bg-base-200 p-6 pt-24">
       <div className="max-w-4xl mx-auto">
         {/* Page Header */}
         <div className="mb-8">

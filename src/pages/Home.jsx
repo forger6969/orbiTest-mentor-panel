@@ -275,8 +275,8 @@ const Home = ({ groups = [], students = [], exams = [] }) => {
   }, [exams]);
 
   return (
-    <div className="min-h-screen p-8 mx-auto w-[70%]">
-      <div className="min-h-screen p-8 mx-auto w-[120%] ml-10">
+    <div className="mentor-page min-h-screen p-8 mx-auto">
+      <div className="mentor-page__canvas">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-800 mb-1">Группы</h1>

@@ -21,7 +21,7 @@ import {
 // Компонент скелетона
 const ProfileSkeleton = () => {
   return (
-    <div className="ml-64 mt-16 min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8 w-full">
+    <div className="mentor-page ml-64 mt-16 min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8 w-full">
       <div className="max-w-7xl mx-auto">
         {/* Header Skeleton */}
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 mb-6 animate-pulse">
@@ -331,7 +331,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="ml-64 mt-16 min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8 w-full">
+    <div className="mentor-page ml-64 mt-16 min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8 w-full">
       <div className="max-w-7xl mx-auto">
         {/* Сообщения */}
         {message.text && (

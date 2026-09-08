@@ -382,9 +382,9 @@ const Students = ({
       animate="animate"
       exit="exit"
       transition={{ duration: 0.2 }}
-      className="w-[87%]"
+      className="mentor-page w-[87%]"
     >
-      <div className="ml-64 min-h-screen bg-gray-50 w-full">
+      <div className="mentor-page__canvas ml-64 min-h-screen bg-gray-50 w-full">
         {/* Header */}
         <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-sm px-6 py-4 mb-6 mt-17.5">
           <div className="flex items-center justify-between gap-4">

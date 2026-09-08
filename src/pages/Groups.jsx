@@ -324,14 +324,14 @@ const Groups = ({ mockGroups, reload, isLoading }) => {
 
   return (
     <motion.div
-      className="w-[87%]"
+      className="mentor-page w-[87%]"
       variants={pageAnimation}
       initial="initial"
       animate="animate"
       exit="exit"
       transition={{ duration: 0.2 }}
     >
-      <div className="ml-64 min-h-screen bg-slate-50 w-full mt-17.5">
+      <div className="mentor-page__canvas ml-64 min-h-screen bg-slate-50 w-full mt-17.5">
         {/* Header */}
         <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm mb-6 px-6 py-4">
           <div className="flex items-center justify-between">

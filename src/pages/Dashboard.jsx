@@ -112,9 +112,9 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="bg-gray-50">
+    <div className="mentor-workspace bg-gray-50">
       {user ? (
-        <div className="flex gap-10">
+        <div className="mentor-shell flex gap-10">
           <Sidebar user={user.mentor} />
           <Header
             user={user.mentor}
